@@ -29,14 +29,16 @@ def create_user():
 
 @app.route('/api/courses/', methods=['GET'])
 def get_all_courses():
-  r = requests.get('https://classes.cornell.edu/api/2.0/search/classes.json?roster=SP19&subject=CS')
-  jsonfile = r.json()
-  data = jsonfile.get('data', '')
-  classes = data.get('classes', '')
-  list = []
-  for c in classes:
-    list.append({'subject': c.get('subject', ''), 'number': c.get('catalogNbr')})
-  return json.dumps(list)
+  subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
+  subject_list = []
+  for s in subjects:
+    subject_list.append(s.get('value', ''))
+  class_list = []
+  for s in subjects:
+    classes = requests.get('https://classes.cornell.edu/api/2.0/search/classes.json?roster=FA18&subject='+s).json().get('data', '').get('classes', '')
+    for c in classes:
+      class_list.append({'course_name': c.get('subject', ''), 'course_num': c.get('catalogNbr')})
+  return json.dumps(classes)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=True)
