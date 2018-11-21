@@ -62,7 +62,6 @@ class UserToCourse(db.Model):
           'course_id': self.course_id
       }
 
-# https://dzone.com/articles/how-to-initialize-database-with-default-values-in
 
 
         
