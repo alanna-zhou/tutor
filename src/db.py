@@ -27,4 +27,25 @@ class User(db.Model):
           'bio': self.bio,
       }
 
+class Course(db.Model):
+    __tablename__ = 'course'
+    id = db.Column(db.Integer, primary_key=True)
+    course_name = db.Column(db.String, nullable=False)
+    course_num = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, **kwargs):
+      self.course_name = kwargs.get('course_name', '')
+      self.course_num = kwargs.get('course_num', '')
+    
+    def serialize(self):
+      return {
+          'course_name': self.course_name,
+          'course_num': self.course_num
+      }
+
+    
+
+# https://dzone.com/articles/how-to-initialize-database-with-default-values-in
+
+
         
