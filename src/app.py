@@ -76,7 +76,7 @@ def create_user():
   )
   db.session.add(user)
   db.session.commit()
-  return json.dumps({'success': True, 'data': user.serialize()}), 201
+  return json.dumps({'success': True, 'data': user.serialize()}), 200
 
 @app.route('/api/user/add-course/', methods=['POST'])
 def add_course_to_user():
@@ -150,6 +150,21 @@ def get_all_courses():
   for course in courses:
     result.append(course.serialize())
   return json.dumps({'success': True, 'data': result}), 200
+
+@app.route('/api/user/<string:net_id>/courses/', methods=['GET'])
+def get_user_courses(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'Invalid user!'}), 404
+  user_to_course = UserToCourse.query.filter_by(user_id=user.id)
+  if user_to_course is None:
+    return json.dumps({'success': False, 'error': 'Course not added to user yet!'}), 404
+  courses = []
+  for uc in user_to_course:
+    courses.append(Course.query.filter_by(id=uc.course_id).first().serialize())
+  return json.dumps({'success': True, 'data': courses}), 200
+
+
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=True)
