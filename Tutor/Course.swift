@@ -7,7 +7,7 @@
 //
 
 struct CourseData: Codable {
-//    let success: Bool
+    let success: Bool
     let data: [Course]
 }
 

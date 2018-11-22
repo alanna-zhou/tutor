@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4E93DDECCEBB219EA174752E /* Pods_Tutor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BBD21342D92148EA06089A /* Pods_Tutor.framework */; };
+		CA19E03021A67252005BA9F4 /* CourseWishlistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */; };
 		CA7BF8A521A467250073F6E8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7BF8A421A467250073F6E8 /* AppDelegate.swift */; };
 		CA7BF8A721A467250073F6E8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7BF8A621A467250073F6E8 /* ViewController.swift */; };
 		CA7BF8AC21A467270073F6E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA7BF8AB21A467270073F6E8 /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		767960A9496A3C78BF204CB4 /* Pods-Tutor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tutor.debug.xcconfig"; path = "Target Support Files/Pods-Tutor/Pods-Tutor.debug.xcconfig"; sourceTree = "<group>"; };
+		CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseWishlistTableViewCell.swift; sourceTree = "<group>"; };
 		CA7BF8A121A467250073F6E8 /* Tutor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tutor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA7BF8A421A467250073F6E8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA7BF8A621A467250073F6E8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 			children = (
 				CA7BF8A421A467250073F6E8 /* AppDelegate.swift */,
 				CA7BF8A621A467250073F6E8 /* ViewController.swift */,
+				CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */,
 				CABDE2C921A60E6C00BB77CF /* Course.swift */,
 				CA7BF8B621A49A800073F6E8 /* LoginViewController.swift */,
 				CAC7842A21A4A3E60058CDCF /* ProfileViewController.swift */,
@@ -231,6 +234,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA7BF8B721A49A800073F6E8 /* LoginViewController.swift in Sources */,
+				CA19E03021A67252005BA9F4 /* CourseWishlistTableViewCell.swift in Sources */,
 				CAC7843021A532460058CDCF /* Username.swift in Sources */,
 				CABDE2CA21A60E6C00BB77CF /* Course.swift in Sources */,
 				CA7BF8A721A467250073F6E8 /* ViewController.swift in Sources */,
