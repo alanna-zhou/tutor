@@ -64,6 +64,9 @@ def create_user():
   post_body = json.loads(request.data)
   if 'net_id' not in post_body:
     return json.dumps({'success': False, 'error': 'Needs net id'}), 404
+  user = User.query.filter_by(net_id=post_body.get('net_id')).first()
+  if user is not None:
+    return json.dumps({'success': False, 'error': 'User already exists!' }), 404
   user = User(
       net_id=post_body.get('net_id'), 
       name=post_body.get('name', ''), 
