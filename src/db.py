@@ -45,6 +45,7 @@ class Course(db.Model):
       }
     
 class UserToCourse(db.Model):
+    __tablename__ = 'usertocourse'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     is_tutor = db.Column(db.Boolean, nullable=False)

@@ -21,13 +21,26 @@ with app.app_context():
 @app.before_first_request
 def insert_initial_values(*args, **kwargs):
   db.session.add(Course(course_name='CS', course_num=2112))
-  db.session.commit()
+  db.session.add(Course(course_name='CHEM', course_num=2090))
+  db.session.add(Course(course_name='MATH', course_num=1920))
   db.session.add(User(
     net_id='asz33',
     name='alanna',
     year=2022,
     major='cs',
     bio='hi'
+  ))
+  db.session.add(User(
+    net_id='lae66',
+    name='luis',
+    year=2022,
+    major='mechanical engineering',
+    bio='i am from belgium'
+  ))
+  db.session.add(UserToCourse(
+    user_id=1,
+    is_tutor=False,
+    course_id=1
   ))
   db.session.commit()
   # subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
@@ -86,6 +99,7 @@ def add_course_to_user():
   )
   db.session.add(user_to_course)
   db.session.commit()
+  print('QUERY ALL', [q.serialize() for q in UserToCourse.query.all()])
   result = {
     'net_id': user.net_id,
     'is_tutor': user_to_course.is_tutor,
@@ -94,39 +108,37 @@ def add_course_to_user():
   }
   return json.dumps({'success': True, 'data': result }), 200
 
-# @app.route('/api/user/delete-course/', methods=['POST'])
-# def delete_course_from_user():
-#   post_body = json.loads(request.data)
-#   keys = ['net_id', 'course_name', 'course_num']
-#   for k in keys:
-#     if k not in post_body:
-#       return json.dumps({'success': False, 'error': 
-#           'Missing necessary parameter to delete a course!'}), 404
-  
-#   user = User.query.filter_by(net_id=post_body.get('net_id')).first()
-#   if user is None:
-#     return json.dumps({'success': False, 'error': 'Invalid user!'}), 404
-#   course = Course.query.filter_by(
-#       course_name=post_body.get('course_name'), 
-#       course_num=post_body.get('course_num')
-#   ).first()
-#   if course is None:
-#     return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
-#   user_to_course = UserToCourse.query.filter_by(
-#       user_id=user.id,
-#       is_tutor=post_body.get('is_tutor', ''),
-#       course_id=course.id
-#   ).first()
-#   if user_to_course is None:
-#     return json.dumps({'success': False, 'error': 'Course has not been added to user yet!'}), 404
-#   db.session.delete(user_to_course)
-#   db.session.commit()
-#   result = {
-#     'net_id': user.net_id,
-#     'course_name': course.course_name,
-#     'course_num': course.course_num
-#   }
-#   return json.dumps({'success': True, 'data': result }), 200
+@app.route('/api/user/delete-course/', methods=['POST'])
+def delete_course_from_user():
+  post_body = json.loads(request.data)
+  keys = ['net_id', 'course_name', 'course_num']
+  for k in keys:
+    if k not in post_body:
+      return json.dumps({'success': False, 'error': 
+          'Missing necessary parameter to delete a course!'}), 404
+  user = User.query.filter_by(net_id=post_body.get('net_id')).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'Invalid user!'}), 404
+  course = Course.query.filter_by(
+      course_name=post_body.get('course_name'), 
+      course_num=post_body.get('course_num')
+  ).first()
+  if course is None:
+    return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
+  user_to_course = UserToCourse.query.filter_by(
+      user_id=user.id,
+      course_id=course.id
+  ).first()
+  if user_to_course is None:
+    return json.dumps({'success': False, 'error': 'Course has not been added to user yet!'}), 404
+  db.session.delete(user_to_course)
+  db.session.commit()
+  result = {
+    'net_id': user.net_id,
+    'course_name': course.course_name,
+    'course_num': course.course_num
+  }
+  return json.dumps({'success': True, 'data': result }), 200
   
 @app.route('/api/courses/', methods=['GET'])
 def get_all_courses():
