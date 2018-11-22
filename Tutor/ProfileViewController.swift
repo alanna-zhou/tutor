@@ -133,7 +133,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
             switch response.result {
             case let .success(data):
                 let decoder = JSONDecoder()
-                print("decodododod")
+                print("Successful response")
                 if let username = try? decoder.decode(Username.self, from: data) {
                     if username.success {
                         let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
@@ -147,7 +147,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
                     }
                 }
             case let .failure(error):
-                print("ripboi")
+                print("Connection to server failed!")
                 print(error.localizedDescription)
             }
         }
