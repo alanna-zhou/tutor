@@ -95,6 +95,9 @@ def add_course_to_user():
   ).first()
   if course is None:
     return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
+  user_to_course = UserToCourse.query.filter_by(user_id=user.id, course_id=course.id)
+  if user_to_course is not None:
+    return json.dumps({'success': False, 'error': 'Course already added to user!'}), 404
   user_to_course = UserToCourse(
     is_tutor=post_body.get('is_tutor', ''),
     user_id=user.id,
@@ -163,6 +166,33 @@ def get_user_courses(net_id):
   for uc in user_to_course:
     courses.append(Course.query.filter_by(id=uc.course_id).first().serialize())
   return json.dumps({'success': True, 'data': courses}), 200
+
+@app.route('/api/tutor/<string:net_id>/courses/', methods=['GET'])
+def get_tutor_courses(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'Invalid user!'}), 404
+  user_to_course = UserToCourse.query.filter_by(user_id=user.id, is_tutor=True)
+  if user_to_course is None:
+    return json.dumps({'success': False, 'error': 'Course not added to user yet!'}), 404
+  courses = []
+  for uc in user_to_course:
+    courses.append(Course.query.filter_by(id=uc.course_id).first().serialize())
+  return json.dumps({'success': True, 'data': courses}), 200
+
+@app.route('/api/tutee/<string:net_id>/courses/', methods=['GET'])
+def get_tutee_courses(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'Invalid user!'}), 404
+  user_to_course = UserToCourse.query.filter_by(user_id=user.id, is_tutor=False)
+  if user_to_course is None:
+    return json.dumps({'success': False, 'error': 'Course not added to user yet!'}), 404
+  courses = []
+  for uc in user_to_course:
+    courses.append(Course.query.filter_by(id=uc.course_id).first().serialize())
+  return json.dumps({'success': True, 'data': courses}), 200
+
 
 
 
