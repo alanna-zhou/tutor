@@ -6,7 +6,6 @@ from sqlalchemy.event import listen
 from sqlalchemy import event
 from flask_sqlalchemy import SQLAlchemy
 
-
 db_filename = "data.db"
 app = Flask(__name__)
 
@@ -18,40 +17,40 @@ db.init_app(app)
 with app.app_context():
   db.create_all()
 
-@app.before_first_request
+# @app.before_first_request
 def insert_initial_values(*args, **kwargs):
-  db.session.add(Course(course_subject='CS', course_num=2112, course_name='Object-Oriented Programming and Data Structures'))
-  db.session.add(Course(course_subject='CHEM', course_num=2090, course_name='General Chemistry'))
-  db.session.add(Course(course_subject='MATH', course_num=1920, course_name='Multivariable Calculus'))
-  db.session.add(User(
-    net_id='asz33',
-    name='alanna',
-    year=2022,
-    major='cs',
-    bio='hi'
-  ))
-  db.session.add(User(
-    net_id='lae66',
-    name='luis',
-    year=2022,
-    major='mechanical engineering',
-    bio='i am from belgium'
-  ))
-  db.session.add(UserToCourse(
-    user_id=1,
-    is_tutor=False,
-    course_id=1
-  ))
-  db.session.commit()
-  # subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
-  # subject_list = []
-  # for s in subjects:
-  #     subject_list.append(s.get('value', ''))
-  # course_list = []
-  # for s in subject_list:
-  #     courses = requests.get('https://classes.cornell.edu/api/2.0/search/classes.json?roster=FA18&subject='+str(s)).json().get('data', '').get('classes', '')
-  #     for c in courses:
-  #         db.session.add(Course(course_subject=c.get('subject', ''), course_num=c.get('catalogNbr', ''), course_name=c.get('titleLong', '')))
+  # db.session.add(Course(course_subject='CS', course_num=2112, course_name='Object-Oriented Programming and Data Structures'))
+  # db.session.add(Course(course_subject='CHEM', course_num=2090, course_name='General Chemistry'))
+  # db.session.add(Course(course_subject='MATH', course_num=1920, course_name='Multivariable Calculus'))
+  # db.session.add(User(
+  #   net_id='asz33',
+  #   name='alanna',
+  #   year=2022,
+  #   major='cs',
+  #   bio='hi'
+  # ))
+  # db.session.add(User(
+  #   net_id='lae66',
+  #   name='luis',
+  #   year=2022,
+  #   major='mechanical engineering',
+  #   bio='i am from belgium'
+  # ))
+  # db.session.add(UserToCourse(
+  #   user_id=1,
+  #   is_tutor=False,
+  #   course_id=1
+  # ))
+  # db.session.commit()
+  subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
+  subject_list = []
+  for s in subjects:
+      subject_list.append(s.get('value', ''))
+  course_list = []
+  for s in subject_list:
+      courses = requests.get('https://classes.cornell.edu/api/2.0/search/classes.json?roster=FA18&subject='+str(s)).json().get('data', '').get('classes', '')
+      for c in courses:
+          db.session.add(Course(course_subject=c.get('subject', ''), course_num=c.get('catalogNbr', ''), course_name=c.get('titleLong', '')))
   db.session.commit()
 
 @app.route('/api/test/<int:course_id>/', methods=['GET'])
@@ -81,7 +80,7 @@ def create_user():
 @app.route('/api/user/add-course/', methods=['POST'])
 def add_course_to_user():
   post_body = json.loads(request.data)
-  keys = ['net_id', 'is_tutor', 'course_name', 'course_num']
+  keys = ['net_id', 'is_tutor', 'course_subject', 'course_num']
   for k in keys:
     if k not in post_body:
       return json.dumps({'success': False, 'error': 
@@ -95,7 +94,7 @@ def add_course_to_user():
   ).first()
   if course is None:
     return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
-  user_to_course = UserToCourse.query.filter_by(user_id=user.id, course_id=course.id)
+  user_to_course = UserToCourse.query.filter_by(user_id=user.id, course_id=course.id).one_or_none()
   if user_to_course is not None:
     return json.dumps({'success': False, 'error': 'Course already added to user!'}), 404
   user_to_course = UserToCourse(
@@ -109,15 +108,16 @@ def add_course_to_user():
   result = {
     'net_id': user.net_id,
     'is_tutor': user_to_course.is_tutor,
-    'course_name': course.course_name,
-    'course_num': course.course_num
+    'course_subject': course.course_subject,
+    'course_num': course.course_num,
+    'course_name': course.course_name
   }
   return json.dumps({'success': True, 'data': result }), 200
 
 @app.route('/api/user/delete-course/', methods=['POST'])
 def delete_course_from_user():
   post_body = json.loads(request.data)
-  keys = ['net_id', 'course_name', 'course_num']
+  keys = ['net_id', 'course_subject', 'course_num']
   for k in keys:
     if k not in post_body:
       return json.dumps({'success': False, 'error': 
@@ -126,7 +126,7 @@ def delete_course_from_user():
   if user is None:
     return json.dumps({'success': False, 'error': 'Invalid user!'}), 404
   course = Course.query.filter_by(
-      course_name=post_body.get('course_name'), 
+      course_subject=post_body.get('course_subject'), 
       course_num=post_body.get('course_num')
   ).first()
   if course is None:
@@ -141,8 +141,9 @@ def delete_course_from_user():
   db.session.commit()
   result = {
     'net_id': user.net_id,
-    'course_name': course.course_name,
-    'course_num': course.course_num
+    'course_subject': course.course_subject,
+    'course_num': course.course_num,
+    'course_name': course.course_name
   }
   return json.dumps({'success': True, 'data': result }), 200
   
