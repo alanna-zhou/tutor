@@ -14,6 +14,6 @@ struct CourseData: Codable {
 struct Course: Codable {
 //    let course_name: String
 //    let course_num: Int
-    let number: Int
-    let subject: String
+    let course_name: String
+    let course_num: Int
 }

@@ -37,28 +37,32 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
             presentUserSetupView()
         }
         
-//        // Getting courses from server
-//        Alamofire.request(getCoursesURL, method: .get).validate().responseData { response in
-//            switch response.result {
-//            case let .success(data):
-//                let decoder = JSONDecoder()
-//                print("Successful response")
-//                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
-//                    if coursedata.success {
-//                        self.courses = coursedata.data
-//                    }
-//                }
-//                else {
-//                    print("Couldn't decode tho rip")
-//                }
-//            case let .failure(error):
-//                print("Connection to server failed!")
-//                print(error.localizedDescription)
-//                self.courses = []
-//            }
-//        }
-        
-        // Prints JSON
+        // Getting courses from server
+        Alamofire.request(getCoursesURL, method: .get).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                print("Successful response")
+                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
+                    if coursedata.success {
+                        self.courses = coursedata.data
+                        for course in self.courses {
+                            self.courseNames.append("\(course.course_name) \(course.course_num)")
+                        }
+                        print(self.courseNames)
+                    }
+                }
+                else {
+                    print("Couldn't decode tho rip")
+                }
+            case let .failure(error):
+                print("Connection to server failed!")
+                print(error.localizedDescription)
+                self.courses = []
+            }
+        }
+//
+//        // Prints JSON
 //        Alamofire.request(getCoursesURL, method: .get).validate().responseJSON { response in
 //            switch response.result {
 //            case let .success(data):
@@ -70,22 +74,18 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
 //                self.courses = []
 //            }
 //        }
-        
-        for course in courses {
-            courseNames.append("\(course.subject): \(course.number)")
-        }
-        
+    
         // Making search bar and dropdown menu
         searchBar = UISearchBar()
         view.addSubview(searchBar)
         
-//        dropDown = DropDown()
-//        dropDown.anchorView = searchBar
-//        dropDown.backgroundColor = .white
-//        dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-//            print("Selected item: \(item) at index: \(index)")
-//        }
-//        dropDown.direction = .bottom
+        dropDown = DropDown()
+        dropDown.anchorView = searchBar
+        dropDown.backgroundColor = .white
+        dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
+            print("Selected item: \(item) at index: \(index)")
+        }
+        dropDown.direction = .bottom
         
         tutorTuteeSegment = UISegmentedControl()
         tutorTuteeSegment.translatesAutoresizingMaskIntoConstraints = false
@@ -186,7 +186,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }
     
     func checkUsername() -> Bool {
-        return true
+        return false
     }
 }
 
