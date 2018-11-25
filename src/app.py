@@ -17,7 +17,7 @@ db.init_app(app)
 with app.app_context():
   db.create_all()
 
-@app.before_first_request
+# @app.before_first_request
 def insert_initial_values(*args, **kwargs):
   # db.session.add(Course(course_subject='CS', course_num=2112, course_name='Object-Oriented Programming and Data Structures'))
   # db.session.add(Course(course_subject='CHEM', course_num=2090, course_name='General Chemistry'))
@@ -236,10 +236,10 @@ def match_users():
     return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
   tutor = User.query.filter_by(net_id=post_body.get('tutor_net_id')).first()
   if not is_valid_tutor(tutor, course):
-    return json.dumps({'success': False, 'error': 'User is not a valid tutor!'}), 404
+    return json.dumps({'success': False, 'error': 'User is not a valid or available tutor!'}), 404
   tutee = User.query.filter_by(net_id=post_body.get('tutee_net_id')).first()
   if not is_valid_tutee(tutee, course):
-    return json.dumps({'success': False, 'error': 'User is not a valid tutee!'}), 404
+    return json.dumps({'success': False, 'error': 'User is not a valid or available tutee!'}), 404
   match = Match.query.filter_by(tutor_id=tutor.id, tutee_id=tutee.id, course_id=course.id).first()
   if match is not None:
     return json.dumps({'success': False, 'error': 'Match has already been made!'}), 404
@@ -260,10 +260,14 @@ def match_users():
   return json.dumps({'success': True, 'data': result}), 200
 
 def is_valid_tutor(tutor, course):
-  return UserToCourse.query.filter_by(user_id=tutor.id, course_id=course.id, is_tutor=True).first() is not None
-  
+  is_tutor = UserToCourse.query.filter_by(user_id=tutor.id, course_id=course.id, is_tutor=True).first()
+  match = Match.query.filter_by(tutor_id=tutor.id, course_id=course.id).first()
+  return is_tutor is not None and match is None
+
 def is_valid_tutee(tutee, course):
-  return UserToCourse.query.filter_by(user_id=tutee.id, course_id=course.id, is_tutor=False).first() is not None
+  is_tutee = UserToCourse.query.filter_by(user_id=tutee.id, course_id=course.id, is_tutor=False).first()
+  match = Match.query.filter_by(tutee_id=tutee.id, course_id=course.id).first()
+  return is_tutee is not None and match is None
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=True)
