@@ -1,5 +1,5 @@
 //
-//  CourseWishlistTableViewCell.swift
+//  CourseTableViewCell.swift
 //  Tutor
 //
 //  Created by Eli Zhang on 11/24/18.
@@ -9,8 +9,8 @@
 import UIKit
 import SnapKit
 
-class CourseWishlistTableViewCell: UITableViewCell {
-    
+class CourseTableViewCell: UITableViewCell {
+
     var courseLabel: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

@@ -23,7 +23,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     var bio: UITextView!
     var submitButton: UIButton!
     
-    let addUserURL = "http://localhost:5000/api/user/"
+    let addUserURL = "https://localhost:5000/api/user/"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,12 +124,18 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
             banner.show()
             return
         }
+        guard let username = username else {
+            return
+        }
+        guard let name = name else {
+            return
+        }
         let parameters: Parameters = ["net_id": username,
                                       "name": name,
                                       "year": year,
                                       "major": major,
                                       "bio": bio]
-        Alamofire.request(addUserURL, parameters: parameters).validate().responseData { response in
+        Alamofire.request(addUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
             switch response.result {
             case let .success(data):
                 let decoder = JSONDecoder()

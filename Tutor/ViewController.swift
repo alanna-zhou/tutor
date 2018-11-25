@@ -8,84 +8,33 @@
 
 import UIKit
 import SnapKit
-import DropDown
 import Alamofire
+import ViewAnimator
 
-class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource {
-    var tutoring: Bool = true
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var tutorTuteeSegment: UISegmentedControl!
-    var searchBar: UISearchBar!
-    var courses: [Course] = []
-    var courseNames: [String] = []
-    var matchingCourses: [String] = []
     var selectedTutorCourses: [String] = []
     var selectedTuteeCourses: [String] = []
-    var dropDown: DropDown!
-
+    var netID: String!
+    var name: String!
+    
     var coursesLabel: UILabel!
     var tableView: UITableView!
     
-    let getCoursesURL = "http://localhost:5000/api/courses/"
-    let courseWishlistReuseIdentifier = "courseWishlistReuseIdentifier"
+    let courseReuseIdentifier = "courseReuseIdentifier"
     let cellHeight: CGFloat = 60
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
-        if (!checkUsername()) {
-            presentUserSetupView()
-        }
-        
-        // Getting courses from server
-        Alamofire.request(getCoursesURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                print("Successful response")
-                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
-                    if coursedata.success {
-                        self.courses = coursedata.data
-                        for course in self.courses {
-                            self.courseNames.append("\(course.course_name) \(course.course_num)")
-                        }
-                        print(self.courseNames)
-                    }
-                }
-                else {
-                    print("Couldn't decode tho rip")
-                }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-                self.courses = []
-            }
-        }
-//
-//        // Prints JSON
-//        Alamofire.request(getCoursesURL, method: .get).validate().responseJSON { response in
-//            switch response.result {
-//            case let .success(data):
-//                print(data)
-//                print("Successful response")
-//            case let .failure(error):
-//                print("Connection to server failed!")
-//                print(error.localizedDescription)
-//                self.courses = []
-//            }
-//        }
+        checkUsername()
     
-        // Making search bar and dropdown menu
-        searchBar = UISearchBar()
-        view.addSubview(searchBar)
-        
-        dropDown = DropDown()
-        dropDown.anchorView = searchBar
-        dropDown.backgroundColor = .white
-        dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
-            print("Selected item: \(item) at index: \(index)")
-        }
-        dropDown.direction = .bottom
+        coursesLabel = UILabel()
+        coursesLabel.text = "Your Courses"
+        coursesLabel.textColor = .black
+        coursesLabel.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        coursesLabel.textAlignment = .center
+        view.addSubview(coursesLabel)
         
         tutorTuteeSegment = UISegmentedControl()
         tutorTuteeSegment.translatesAutoresizingMaskIntoConstraints = false
@@ -98,23 +47,29 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         selectedTuteeCourses = ["Zoomba", "Roomba", "Tuba"]
         
         self.navigationItem.titleView = tutorTuteeSegment
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pushWishlistView))
+        
         tableView = UITableView()
-        tableView.register(CourseWishlistTableViewCell.self, forCellReuseIdentifier: courseWishlistReuseIdentifier)
+        tableView.register(CourseTableViewCell.self, forCellReuseIdentifier: courseReuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
+        
+        let bottomFade = AnimationType.from(direction: .bottom, offset: 20.0)
+        let rightFade = AnimationType.from(direction: .right, offset: 60.0)
+        tableView.animate(animations: [bottomFade, rightFade], delay: 0.25)
         view.addSubview(tableView)
         
         setUpConstraints()
     }
     
     func setUpConstraints() {
-        searchBar.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+        coursesLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.trailing.equalTo(view)
         }
         
         tableView.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(searchBar.snp.bottom)
+            make.top.equalTo(coursesLabel.snp.bottom).offset(20)
             make.leading.trailing.equalTo(view)
             make.bottom.equalTo(view)
         }
@@ -124,40 +79,15 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         tableView.reloadData()
     }
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        matchingCourses = searchText.isEmpty ? courseNames : courseNames.filter({ (option) -> Bool in
-            option.range(of: searchText, options: .caseInsensitive) != nil
-        })
-        
-        dropDown.dataSource = matchingCourses
-        dropDown.show()
-    }
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        searchBar.setShowsCancelButton(true, animated: true)
-        for ob: UIView in ((searchBar.subviews[0] )).subviews {
-            if let z = ob as? UIButton {
-                let btn: UIButton = z
-                btn.setTitleColor(UIColor.white, for: .normal)
-            }
-        }
-    }
-    
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        searchBar.showsCancelButton = false
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-        searchBar.text = ""
-        matchingCourses = courseNames
-        dropDown.hide()
-    }
-    
     @objc func presentUserSetupView() {
         let modalView = LoginViewController()
         let navigationViewController = UINavigationController(rootViewController: modalView)
         present(navigationViewController, animated: true, completion: nil)
+    }
+    
+    @objc func pushWishlistView() {
+        let navigationView = WishlistViewController()
+        navigationController?.pushViewController(navigationView, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -168,7 +98,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: courseWishlistReuseIdentifier, for: indexPath) as! CourseWishlistTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: courseReuseIdentifier, for: indexPath) as! CourseTableViewCell
         var course: String
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
             course = selectedTutorCourses[indexPath.row]
@@ -185,8 +115,16 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         return cellHeight
     }
     
-    func checkUsername() -> Bool {
-        return false
+    func checkUsername() {
+//        let defaults = UserDefaults.standard
+//        if let netID = defaults.object(forKey: "netID") as? String, let name = defaults.object(forKey: "name") as? String {
+//            self.netID = netID
+//            self.name = name
+//        }
+//        else {
+//            presentUserSetupView()
+//        }
+//
     }
 }
 

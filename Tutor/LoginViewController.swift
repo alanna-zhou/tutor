@@ -118,7 +118,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             banner.show()
             return
         }
-        
+        let defaults = UserDefaults.standard
+        defaults.set(username, forKey: "netID")
+        defaults.set(name, forKey: "name")
         nextStep(username: username, name: name)
     }
     
