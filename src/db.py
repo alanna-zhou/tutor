@@ -31,17 +31,22 @@ class User(db.Model):
 class Course(db.Model):
     __tablename__ = 'course'
     id = db.Column(db.Integer, primary_key=True)
-    course_name = db.Column(db.String, nullable=False)
+    course_subject = db.Column(db.String, nullable=False)
     course_num = db.Column(db.Integer, nullable=False)
+    course_name = db.Column(db.String, nullable=False)
+    user_to_course = db.relationship('UserToCourse', cascade='delete')
 
     def __init__(self, **kwargs):
-      self.course_name = kwargs.get('course_name')
+      self.course_subject = kwargs.get('course_subject')
       self.course_num = kwargs.get('course_num')
+      self.course_name = kwargs.get('course_name')
+
     
     def serialize(self):
       return {
+          'course_subject': self.course_subject,
+          'course_num': self.course_num,
           'course_name': self.course_name,
-          'course_num': self.course_num
       }
     
 class UserToCourse(db.Model):
