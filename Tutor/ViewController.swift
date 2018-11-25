@@ -54,9 +54,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
         
-        let bottomFade = AnimationType.from(direction: .bottom, offset: 20.0)
         let rightFade = AnimationType.from(direction: .right, offset: 60.0)
-        tableView.animate(animations: [bottomFade, rightFade], delay: 0.25)
+        tableView.animate(animations: [rightFade], duration: 0.5)
         view.addSubview(tableView)
         
         setUpConstraints()

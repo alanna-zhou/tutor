@@ -15,10 +15,17 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     
     var courses: [Course] = []
     var courseNames: [String] = []
+    var filteredCourses: [String] = []
+    var searchController: UISearchController!
     let courseWishlistReuseIdentifier = "courseWishlistReuseIdentifier"
     let getCoursesURL = "http://localhost:5000/api/courses/"
     
     let cellHeight: CGFloat = 60
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.hidesSearchBarWhenScrolling = false
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +41,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
                     if coursedata.success {
                         self.courses = coursedata.data
                         for course in self.courses {
-                            self.courseNames.append("\(course.course_name) \(course.course_num)")
+                            self.courseNames.append("\(course.course_subject) \(course.course_num): \(course.course_name)")
                             self.tableView.reloadData()
                         }
                     }
@@ -48,6 +55,14 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
                 self.courses = []
             }
         }
+        
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Find a class"
+        navigationItem.hidesSearchBarWhenScrolling = true
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
         
         tableView = UITableView()
         tableView.register(CourseWishlistTableViewCell.self, forCellReuseIdentifier: courseWishlistReuseIdentifier)
@@ -65,12 +80,20 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isFiltering() {
+            return filteredCourses.count
+        }
         return courseNames.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: courseWishlistReuseIdentifier, for: indexPath) as! CourseWishlistTableViewCell
-        let course = courseNames[indexPath.row]
+        let course: String
+        if isFiltering() {
+            course = filteredCourses[indexPath.row]
+        } else {
+            course = courseNames[indexPath.row]
+        }
         cell.addInfo(course: course)
         cell.setNeedsUpdateConstraints()
         return cell
@@ -79,4 +102,28 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return cellHeight
     }
+    
+    func searchBarIsEmpty() -> Bool {
+        // Returns true if the text is empty or nil
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        filteredCourses = courseNames.filter({( course: String) -> Bool in
+            return course.lowercased().contains(searchText.lowercased())
+        })
+        tableView.reloadData()
+    }
+    
+    func isFiltering() -> Bool {
+        return searchController.isActive && !searchBarIsEmpty()
+    }
 }
+
+extension WishlistViewController: UISearchResultsUpdating {
+    // MARK: - UISearchResultsUpdating Delegate
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchController.searchBar.text!)
+    }
+}
+
