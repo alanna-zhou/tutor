@@ -16,5 +16,5 @@ struct Username: Codable {
 
 struct UsernameData: Codable {
     let success: Bool
-    let data: UsernameData
+    let data: Username
 }
