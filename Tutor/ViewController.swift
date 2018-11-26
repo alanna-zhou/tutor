@@ -5,7 +5,6 @@
 //  Created by Eli Zhang on 11/20/18.
 //  Copyright © 2018 Cornell AppDev. All rights reserved.
 //
-
 import UIKit
 import SnapKit
 import Alamofire
@@ -28,7 +27,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         view.backgroundColor = .white
         checkUsername()
-    
+        
         coursesLabel = UILabel()
         coursesLabel.text = "Your Courses"
         coursesLabel.textColor = .black
@@ -115,15 +114,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func checkUsername() {
-//        let defaults = UserDefaults.standard
-//        if let netID = defaults.object(forKey: "netID") as? String, let name = defaults.object(forKey: "name") as? String {
-//            self.netID = netID
-//            self.name = name
-//        }
-//        else {
-//            presentUserSetupView()
-//        }
-//
+        //        let defaults = UserDefaults.standard
+        //        if let netID = defaults.object(forKey: "netID") as? String, let name = defaults.object(forKey: "name") as? String {
+        //            self.netID = netID
+        //            self.name = name
+        //        }
+        //        else {
+        //            presentUserSetupView()
+        //        }
+        //
     }
 }
-

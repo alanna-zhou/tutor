@@ -125,9 +125,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func nextStep(username: String, name: String) {
-        let navigationView = ProfileViewController()
-        navigationView.username = username
-        navigationView.name = name
+        let navigationView = ProfileViewController(username: username, name: name)
         navigationController?.pushViewController(navigationView, animated: true)
     }
 }
