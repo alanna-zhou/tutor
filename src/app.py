@@ -1,6 +1,6 @@
 import json
 import requests
-from db import db, User, Course, UserToCourse
+from db import db, User, Course, UserToCourse, Match
 from flask import Flask, request
 from sqlalchemy.event import listen
 from sqlalchemy import event
@@ -22,26 +22,28 @@ def insert_initial_values(*args, **kwargs):
   # db.session.add(Course(course_subject='CS', course_num=2112, course_name='Object-Oriented Programming and Data Structures'))
   # db.session.add(Course(course_subject='CHEM', course_num=2090, course_name='General Chemistry'))
   # db.session.add(Course(course_subject='MATH', course_num=1920, course_name='Multivariable Calculus'))
-  # db.session.add(User(
-  #   net_id='asz33',
-  #   name='alanna',
-  #   year=2022,
-  #   major='cs',
-  #   bio='hi'
-  # ))
-  # db.session.add(User(
-  #   net_id='lae66',
-  #   name='luis',
-  #   year=2022,
-  #   major='mechanical engineering',
-  #   bio='i am from belgium'
-  # ))
-  # db.session.add(UserToCourse(
-  #   user_id=1,
-  #   is_tutor=False,
-  #   course_id=1
-  # ))
-  # db.session.commit()
+  db.session.add(User(
+    net_id='asz33',
+    name='Alanna Zhou',
+    year=2022,
+    major='Computer Science',
+    bio='I like fried bananas.'
+  ))
+  db.session.add(User(
+    net_id='lae66',
+    name='Luis Enriquez',
+    year=2022,
+    major='Mechanical Engineering',
+    bio='I like crude memes.'
+  ))
+  db.session.add(User(
+    net_id='slh268',
+    name='Sarah Huang',
+    year=2022,
+    major='Chemical Engineering',
+    bio='Yeetaki Mushroomz!'
+  ))
+  db.session.commit()
   subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
   subject_list = []
   for s in subjects:
@@ -220,6 +222,52 @@ def get_course_tutees(course_subject, course_num):
     tutees.append(User.query.filter_by(id=uc.user_id).first().net_id)
   return json.dumps({'success': True, 'data': tutees}), 200
 
+@app.route('/api/match/', methods=['POST'])
+def match_users():
+  post_body = json.loads(request.data)
+  keys = ['tutor_net_id', 'tutee_net_id', 'course_subject', 'course_num']
+  for k in keys:
+    if k not in post_body:
+      return json.dumps({'success': False, 'error': 
+          'Missing necessary parameter to add a match a tutor and tutee!'}), 404
+  course = Course.query.filter_by(course_subject=post_body.get('course_subject'), 
+      course_num=post_body.get('course_num')).first()
+  if course is None:
+    return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
+  tutor = User.query.filter_by(net_id=post_body.get('tutor_net_id')).first()
+  if not is_valid_tutor(tutor, course):
+    return json.dumps({'success': False, 'error': 'User is not a valid or available tutor!'}), 404
+  tutee = User.query.filter_by(net_id=post_body.get('tutee_net_id')).first()
+  if not is_valid_tutee(tutee, course):
+    return json.dumps({'success': False, 'error': 'User is not a valid or available tutee!'}), 404
+  match = Match.query.filter_by(tutor_id=tutor.id, tutee_id=tutee.id, course_id=course.id).first()
+  if match is not None:
+    return json.dumps({'success': False, 'error': 'Match has already been made!'}), 404
+  match = Match(
+    tutor_id=tutor.id,
+    tutee_id=tutee.id,
+    course_id=course.id
+  )
+  db.session.add(match)
+  db.session.commit()
+  result = {
+    'tutor_net_id': tutor.net_id,
+    'tutee_net_id': tutee.net_id,
+    'course_subject': course.course_subject,
+    'course_num': course.course_num,
+    'course_name': course.course_name
+  }
+  return json.dumps({'success': True, 'data': result}), 200
+
+def is_valid_tutor(tutor, course):
+  is_tutor = UserToCourse.query.filter_by(user_id=tutor.id, course_id=course.id, is_tutor=True).first()
+  match = Match.query.filter_by(tutor_id=tutor.id, course_id=course.id).first()
+  return is_tutor is not None and match is None
+
+def is_valid_tutee(tutee, course):
+  is_tutee = UserToCourse.query.filter_by(user_id=tutee.id, course_id=course.id, is_tutor=False).first()
+  match = Match.query.filter_by(tutee_id=tutee.id, course_id=course.id).first()
+  return is_tutee is not None and match is None
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=True)

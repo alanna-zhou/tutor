@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy.orm import relationship
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -68,6 +68,29 @@ class UserToCourse(db.Model):
           'course_id': self.course_id
       }
 
+class Match(db.Model):
+    __tablename__ = 'match'
+    id = db.Column(db.Integer, primary_key=True)
+    tutor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    tutee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    tutor = db.relationship("User", foreign_keys=[tutor_id])
+    tutee = db.relationship("User", foreign_keys=[tutee_id])
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
 
-
+    # company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
+    # stakeholder_id = Column(Integer, ForeignKey('company.id'), nullable=False)
+    # company = relationship("Company", foreign_keys=[company_id])
+    # stakeholder = relationship("Company", foreign_keys=[stakeholder_id])
+ 
+    def __init__(self, **kwargs):
+      self.tutor_id = kwargs.get('tutor_id')
+      self.tutee_id = kwargs.get('tutee_id')
+      self.course_id = kwargs.get('course_id')
+    
+    def serialize(self):
+      return {
+          'tutor_id': self.tutor_id,
+          'tutee_id': self.tutee_id,
+          'course_id': self.course_id
+      }
         
