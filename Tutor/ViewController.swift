@@ -18,8 +18,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var tutorTuteeSegment: UISegmentedControl!
     var selectedTutorCourses: [String] = []
     var selectedTuteeCourses: [String] = []
-    var netID: String!
-    var name: String!
     var bulletinManager: BLTNItemManager!
     
     var coursesLabel: UILabel!
@@ -52,7 +50,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         self.navigationItem.titleView = tutorTuteeSegment
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pushWishlistView))
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(signOut))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "Gear"), style: .plain, target: self, action: #selector(pushProfileView))
         
         tableView = UITableView()
         tableView.register(CourseTableViewCell.self, forCellReuseIdentifier: courseReuseIdentifier)
@@ -84,8 +82,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @objc func presentUserSetupView() {
-        let modalView = ProfileViewController()
+        let modalView = ProfileSetupViewController()
         present(modalView, animated: true, completion: nil)
+    }
+    
+    @objc func pushProfileView() {
+        let navigationView = ProfileViewController()
+        navigationView.delegate = self
+        navigationController?.pushViewController(navigationView, animated: true)
     }
     
     @objc func pushWishlistView() {
@@ -144,17 +148,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         bulletinManager.showBulletin(above: self)
     }
     
-    @objc func signOut() {
-        let defaults = UserDefaults.standard
-        let dictionary = defaults.dictionaryRepresentation()
-        dictionary.keys.forEach { key in
-            defaults.removeObject(forKey: key)
-        }
-        GIDSignIn.sharedInstance().signOut()
-        print("Signed out.")
-        checkUsername()
-    }
-    
     func login() {
         guard let email = UserDefaults.standard.string(forKey: "email") else {
             return
@@ -165,13 +158,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let netID = email[email.startIndex..<index]
         UserDefaults.standard.set(netID, forKey: "netID")
         let checkUserURL = "http://localhost:5000/api/user/\(netID)/"
-        print(checkUserURL)
         Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
             switch response.result {
             case let .success(data):
                 let decoder = JSONDecoder()
-                if let coursedata = try? decoder.decode(UsernameData.self, from: data) {
-                    if coursedata.success {
+                if let userdata = try? decoder.decode(UserData.self, from: data) {
+                    if userdata.success {
                         print("User exists in database.")
                         UserDefaults.standard.set(netID, forKey: "netID")
                     }

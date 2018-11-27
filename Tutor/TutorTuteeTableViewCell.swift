@@ -11,21 +11,30 @@ import SnapKit
 
 class TutorTuteeTableViewCell: UITableViewCell {
 
-    var courseLabel: UILabel!
+    var nameLabel: UILabel!
+    var netIDLabel: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        courseLabel = UILabel()
-        courseLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
-        contentView.addSubview(courseLabel)
+        nameLabel = UILabel()
+        nameLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
+        contentView.addSubview(nameLabel)
+        
+        netIDLabel = UILabel()
+        netIDLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
+        contentView.addSubview(netIDLabel)
     }
     
     override func updateConstraints() {
-        courseLabel.snp.makeConstraints { (make) -> Void in
-            make.centerY.equalTo(contentView.snp.centerY)
+        nameLabel.snp.makeConstraints { (make) -> Void in
+            make.top.equalTo(contentView.snp.top).offset(20)
             make.leading.equalTo(contentView).offset(20)
             make.trailing.equalTo(contentView).offset(-20)
+        }
+        netIDLabel.snp.makeConstraints { (make) -> Void in
+            make.top.equalTo(contentView.snp.bottom).offset(30)
+            make.leading.trailing.equalTo(nameLabel)
         }
         super.updateConstraints()
     }
@@ -34,7 +43,8 @@ class TutorTuteeTableViewCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
-    func addInfo(course: String) {
-        courseLabel.text = course
+    func addInfo(user: User) {
+        nameLabel.text = user.name
+        netIDLabel.text = user.net_id
     }
 }
