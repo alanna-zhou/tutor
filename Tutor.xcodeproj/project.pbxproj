@@ -13,16 +13,16 @@
 		CA5547D621AA269C004C1197 /* CourseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */; };
 		CA5547D821AA59C7004C1197 /* TutorTuteeCatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */; };
 		CA5547DA21AA6619004C1197 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D921AA6619004C1197 /* ViewController.swift */; };
-		CA5547DC21AA665B004C1197 /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547DB21AA665B004C1197 /* UserData.swift */; };
 		CA5547DE21AA6B44004C1197 /* TutorTuteeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547DD21AA6B44004C1197 /* TutorTuteeTableViewCell.swift */; };
 		CA7BF8A521A467250073F6E8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7BF8A421A467250073F6E8 /* AppDelegate.swift */; };
-		CA7BF8AC21A467270073F6E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA7BF8AB21A467270073F6E8 /* Assets.xcassets */; };
 		CA7BF8AF21A467270073F6E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA7BF8AD21A467270073F6E8 /* LaunchScreen.storyboard */; };
 		CAA73EB421AC88F400721663 /* credentials.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAA73EB321AC88F300721663 /* credentials.plist */; };
 		CAA73EB621AC923000721663 /* LoginBulletinPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA73EB521AC923000721663 /* LoginBulletinPage.swift */; };
 		CABDE2CA21A60E6C00BB77CF /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABDE2C921A60E6C00BB77CF /* Course.swift */; };
-		CAC7842B21A4A3E60058CDCF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7842A21A4A3E60058CDCF /* ProfileViewController.swift */; };
-		CAC7843021A532460058CDCF /* Username.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7842F21A532460058CDCF /* Username.swift */; };
+		CAC7842B21A4A3E60058CDCF /* ProfileSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */; };
+		CAC7843021A532460058CDCF /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7842F21A532460058CDCF /* User.swift */; };
+		CAEABFE821AD15D4004DE148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAEABFE721AD15D3004DE148 /* Assets.xcassets */; };
+		CAEABFEA21AD1916004DE148 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEABFE921AD1916004DE148 /* ProfileViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,18 +32,18 @@
 		CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseTableViewCell.swift; sourceTree = "<group>"; };
 		CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorTuteeCatalogViewController.swift; sourceTree = "<group>"; };
 		CA5547D921AA6619004C1197 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		CA5547DB21AA665B004C1197 /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		CA5547DD21AA6B44004C1197 /* TutorTuteeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorTuteeTableViewCell.swift; sourceTree = "<group>"; };
 		CA7BF8A121A467250073F6E8 /* Tutor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tutor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA7BF8A421A467250073F6E8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CA7BF8AB21A467270073F6E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA7BF8AE21A467270073F6E8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA7BF8B021A467270073F6E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CAA73EB321AC88F300721663 /* credentials.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = credentials.plist; sourceTree = "<group>"; };
 		CAA73EB521AC923000721663 /* LoginBulletinPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginBulletinPage.swift; sourceTree = "<group>"; };
 		CABDE2C921A60E6C00BB77CF /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
-		CAC7842A21A4A3E60058CDCF /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-		CAC7842F21A532460058CDCF /* Username.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Username.swift; sourceTree = "<group>"; };
+		CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewController.swift; sourceTree = "<group>"; };
+		CAC7842F21A532460058CDCF /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		CAEABFE721AD15D3004DE148 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CAEABFE921AD1916004DE148 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CF04D7E6DF715109CBB5C8D0 /* Pods-Tutor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tutor.release.xcconfig"; path = "Target Support Files/Pods-Tutor/Pods-Tutor.release.xcconfig"; sourceTree = "<group>"; };
 		D9BBD21342D92148EA06089A /* Pods_Tutor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tutor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -90,21 +90,21 @@
 		CA7BF8A321A467250073F6E8 /* Tutor */ = {
 			isa = PBXGroup;
 			children = (
-				CAA73EB321AC88F300721663 /* credentials.plist */,
 				CA7BF8A421A467250073F6E8 /* AppDelegate.swift */,
-				CA5547DB21AA665B004C1197 /* UserData.swift */,
-				CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */,
 				CA5547D921AA6619004C1197 /* ViewController.swift */,
-				CAA73EB521AC923000721663 /* LoginBulletinPage.swift */,
+				CAEABFE921AD1916004DE148 /* ProfileViewController.swift */,
 				CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */,
+				CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */,
+				CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */,
 				CA5547DD21AA6B44004C1197 /* TutorTuteeTableViewCell.swift */,
 				CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */,
 				CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */,
+				CAA73EB521AC923000721663 /* LoginBulletinPage.swift */,
 				CABDE2C921A60E6C00BB77CF /* Course.swift */,
-				CAC7842A21A4A3E60058CDCF /* ProfileViewController.swift */,
-				CAC7842F21A532460058CDCF /* Username.swift */,
-				CA7BF8AB21A467270073F6E8 /* Assets.xcassets */,
+				CAC7842F21A532460058CDCF /* User.swift */,
+				CAEABFE721AD15D3004DE148 /* Assets.xcassets */,
 				CA7BF8AD21A467270073F6E8 /* LaunchScreen.storyboard */,
+				CAA73EB321AC88F300721663 /* credentials.plist */,
 				CA7BF8B021A467270073F6E8 /* Info.plist */,
 			);
 			path = Tutor;
@@ -180,8 +180,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA7BF8AF21A467270073F6E8 /* LaunchScreen.storyboard in Resources */,
+				CAEABFE821AD15D4004DE148 /* Assets.xcassets in Resources */,
 				CAA73EB421AC88F400721663 /* credentials.plist in Resources */,
-				CA7BF8AC21A467270073F6E8 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,14 +285,14 @@
 				CA5547DA21AA6619004C1197 /* ViewController.swift in Sources */,
 				CA5547D821AA59C7004C1197 /* TutorTuteeCatalogViewController.swift in Sources */,
 				CA19E03021A67252005BA9F4 /* CourseWishlistTableViewCell.swift in Sources */,
-				CAC7843021A532460058CDCF /* Username.swift in Sources */,
+				CAC7843021A532460058CDCF /* User.swift in Sources */,
 				CABDE2CA21A60E6C00BB77CF /* Course.swift in Sources */,
+				CAEABFEA21AD1916004DE148 /* ProfileViewController.swift in Sources */,
 				CAA73EB621AC923000721663 /* LoginBulletinPage.swift in Sources */,
 				CA5547D621AA269C004C1197 /* CourseTableViewCell.swift in Sources */,
 				CA19E03221A9F6C2005BA9F4 /* WishlistViewController.swift in Sources */,
-				CAC7842B21A4A3E60058CDCF /* ProfileViewController.swift in Sources */,
+				CAC7842B21A4A3E60058CDCF /* ProfileSetupViewController.swift in Sources */,
 				CA7BF8A521A467250073F6E8 /* AppDelegate.swift in Sources */,
-				CA5547DC21AA665B004C1197 /* UserData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

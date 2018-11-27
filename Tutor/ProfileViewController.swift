@@ -2,183 +2,143 @@
 //  ProfileViewController.swift
 //  Tutor
 //
-//  Created by Eli Zhang on 11/20/18.
+//  Created by Eli Zhang on 11/27/18.
 //  Copyright © 2018 Cornell AppDev. All rights reserved.
 //
 
 import UIKit
 import SnapKit
+import GoogleSignIn
 import Alamofire
 import NotificationBannerSwift
 
-class ProfileViewController: UIViewController, UITextFieldDelegate {
-
-    var username: String!
-    var name: String!
-    var yearLabel: UILabel!
-    var yearTextField: UITextField!
-    var majorLabel: UILabel!
-    var majorTextField: UITextField!
-    var bioLabel: UILabel!
+class ProfileViewController: UIViewController {
+    
+    weak var delegate: ViewController!
+    
+    var nameLabel: UILabel!
+    var netIDLabel: UILabel!
+    var imageView: UIImageView!
+    var yearLabel: UITextField!
+    var majorLabel: UITextField!
     var bio: UITextView!
-    var submitButton: UIButton!
-    
-    let addUserURL = "https://localhost:5000/api/user/"
-    
-    init(username: String, name: String) {
-        super.init(nibName: nil, bundle: nil)
-        self.username = username
-        self.name = name
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    var signOutButton: UIButton!
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Profile"
         view.backgroundColor = .white
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
-        self.view.addGestureRecognizer(tapGesture)
-
-        yearLabel = UILabel()
-        yearLabel.text = "Year:"
-        yearLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        nameLabel = UILabel()
+        nameLabel.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        view.addSubview(nameLabel)
+        
+        netIDLabel = UILabel()
+        netIDLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        view.addSubview(netIDLabel)
+        
+        yearLabel = UITextField()
+        yearLabel.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        yearLabel.isUserInteractionEnabled = false
         view.addSubview(yearLabel)
         
-        yearTextField = UITextField()
-        yearTextField.placeholder = "Graduation year"
-        yearTextField.delegate = self
-        yearTextField.tag = 0
-        view.addSubview(yearTextField)
-        
-        majorLabel = UILabel()
-        majorLabel.text = "Major:"
-        majorLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        majorLabel = UITextField()
+        majorLabel.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        majorLabel.isUserInteractionEnabled = false
         view.addSubview(majorLabel)
         
-        majorTextField = UITextField()
-        majorTextField.placeholder = "Enter your major"
-        majorTextField.delegate = self
-        majorTextField.tag = 1
-        view.addSubview(majorTextField)
-        
-        bioLabel = UILabel()
-        bioLabel.text = "Bio:"
-        bioLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        view.addSubview(bioLabel)
-        
         bio = UITextView()
-        bio.isEditable = true
+        bio.font = UIFont.systemFont(ofSize: 18, weight: .light)
+        bio.isEditable = false
         view.addSubview(bio)
         
-        submitButton = UIButton()
-        submitButton.setTitle("Submit", for: .normal)
-        submitButton.setTitleColor(.black, for: .normal)
-        submitButton.titleLabel?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
-        submitButton.addTarget(self, action: #selector(validateProfile), for: .touchUpInside)
-        view.addSubview(submitButton)
+        signOutButton = UIButton()
+        signOutButton.setTitle("Sign out", for: .normal)
+        signOutButton.setTitleColor(.black, for: .normal)
+        signOutButton.titleLabel?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        signOutButton.addTarget(self, action: #selector(signOut), for: .touchUpInside)
+        view.addSubview(signOutButton)
         
+        let netID = UserDefaults.standard.string(forKey: "netID")!      // Net ID should always exist because user is logged in
+        let checkUserURL = "http://localhost:5000/api/user/\(netID)/"
+        Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                if let userdata = try? decoder.decode(UserData.self, from: data) {
+                    if userdata.success {
+                        self.nameLabel.text = userdata.data.name
+                        self.netIDLabel.text = userdata.data.net_id
+                        self.yearLabel.text = userdata.data.year
+                        self.majorLabel.text = userdata.data.major
+                        self.bio.text = userdata.data.bio
+                    }
+                }
+            case let .failure(error):
+                print("Couldn't connect to server!")
+                print(error.localizedDescription)
+            }
+        }
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
+
         setUpConstraints()
     }
     
     func setUpConstraints() {
-        yearLabel.snp.makeConstraints{ (make) -> Void in
+        nameLabel.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.equalTo(view).offset(20)
         }
-        yearTextField.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(yearLabel.snp.bottom).offset(20)
+        netIDLabel.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(nameLabel)
+            make.leading.equalTo(nameLabel.snp.trailing).offset(20)
+        }
+        yearLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(nameLabel.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
         }
-        majorLabel.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(yearTextField.snp.bottom).offset(30)
-            make.leading.equalTo(view).offset(20)
+        majorLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(yearLabel)
+            make.leading.equalTo(yearLabel.snp.trailing).offset(10)
         }
-        majorTextField.snp.makeConstraints{ (make) -> Void in
+        bio.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(majorLabel.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
         }
-        bioLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(majorTextField.snp.bottom).offset(20)
-            make.leading.equalTo(view).offset(20)
-        }
-        bio.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(bioLabel.snp.bottom).offset(20)
-            make.height.equalTo(100)
-            make.leading.equalTo(view).offset(20)
-            make.trailing.equalTo(view).offset(20)
-            make.leading.equalTo(view).offset(20)
-        }
-        submitButton.snp.makeConstraints { (make) -> Void in
+        signOutButton.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(bio.snp.bottom).offset(40)
-            make.centerX.equalTo(view)
-        }
-        
-    }
-    
-    @objc func validateProfile() {
-        guard let year = yearTextField.text, year != "" else {
-            let banner = NotificationBanner(title: "No year entered.", style: .danger)
-            banner.show()
-            return
-        }
-        guard let major = majorTextField.text, major != "" else {
-            let banner = NotificationBanner(title: "No major entered.", style: .danger)
-            banner.show()
-            return
-        }
-        guard let bio = bio.text, bio != "" else {
-            let banner = NotificationBanner(title: "No bio entered.", style: .danger)
-            banner.show()
-            return
-        }
-        guard let username = username else {
-            return
-        }
-        guard let name = name else {
-            return
-        }
-        let parameters: Parameters = ["net_id": username,
-                                      "name": name,
-                                      "year": year,
-                                      "major": major,
-                                      "bio": bio]
-        Alamofire.request(addUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                print("Successful response")
-                if let username = try? decoder.decode(UsernameData.self, from: data) {
-                    if username.success {
-                        let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
-                        banner.show()
-                        self.dismiss(animated: true, completion: nil)
-                        return
-                    }
-                    else {
-                        let banner = NotificationBanner(title: "Username is already taken!", style: .danger)
-                        banner.show()
-                    }
-                }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-            }
+            make.leading.equalTo(view).offset(20)
         }
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let nextField = self.view.viewWithTag(textField.tag + 1) as? UITextField {
-            nextField.becomeFirstResponder()
-        } else {
-            textField.resignFirstResponder()
-        }
-        return false
+
+    @objc func enableEditing() {
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(disableEditing))
+        yearLabel.isUserInteractionEnabled = true
+        majorLabel.isUserInteractionEnabled = true
+        bio.isEditable = true
     }
     
-    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
-        bio.resignFirstResponder()
+    @objc func disableEditing() {
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
+        yearLabel.isUserInteractionEnabled = false
+        majorLabel.isUserInteractionEnabled = false
+        bio.isEditable = false
     }
+    
+    @objc func signOut() {
+        let defaults = UserDefaults.standard
+        let dictionary = defaults.dictionaryRepresentation()
+        dictionary.keys.forEach { key in
+            defaults.removeObject(forKey: key)
+        }
+        GIDSignIn.sharedInstance().signOut()
+        navigationController?.popToRootViewController(animated: true)
+        let banner = NotificationBanner(title: "Signed out successfully!", style: .success)
+        banner.show()
+        delegate?.checkUsername()
+    }
+
 }

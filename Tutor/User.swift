@@ -6,7 +6,7 @@
 //  Copyright © 2018 Cornell AppDev. All rights reserved.
 //
 
-struct Username: Codable {
+struct User: Codable {
     let net_id: String
     let name: String
     let year: String
@@ -14,7 +14,12 @@ struct Username: Codable {
     let bio: String
 }
 
-struct UsernameData: Codable {
+struct UserData: Codable {
     let success: Bool
-    let data: Username
+    let data: User
+}
+
+struct UserArray: Codable {
+    let success: Bool
+    let data: [User]
 }
