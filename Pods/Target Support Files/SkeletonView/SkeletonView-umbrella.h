@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double DropDownVersionNumber;
-FOUNDATION_EXPORT const unsigned char DropDownVersionString[];
+FOUNDATION_EXPORT double SkeletonViewVersionNumber;
+FOUNDATION_EXPORT const unsigned char SkeletonViewVersionString[];
 
