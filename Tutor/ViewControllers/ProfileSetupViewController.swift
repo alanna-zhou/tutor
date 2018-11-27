@@ -135,7 +135,6 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
                                       "year": year,
                                       "major": major,
                                       "bio": bio]
-        print(parameters)
         Alamofire.request(addUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
             switch response.result {
             case let .success(data):
@@ -166,6 +165,8 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        yearTextField.resignFirstResponder()
+        majorTextField.resignFirstResponder()
         bio.resignFirstResponder()
     }
 }

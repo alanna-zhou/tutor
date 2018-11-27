@@ -57,8 +57,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
         
-        let rightFade = AnimationType.from(direction: .right, offset: 60.0)
-        tableView.animate(animations: [rightFade], duration: 0.5)
+//        let rightFade = AnimationType.from(direction: .right, offset: 60.0)
+//        tableView.animate(animations: [rightFade], duration: 0.5)
+        let fromAnimation = AnimationType.from(direction: .right, offset: 30.0)
+        let zoomAnimation = AnimationType.zoom(scale: 0.2)
+        UIView.animate(views: tableView.visibleCells,
+                       animations: [fromAnimation, zoomAnimation], delay: 0.5)
         view.addSubview(tableView)
         
         setUpConstraints()

@@ -14,5 +14,5 @@ target 'Tutor' do
   pod 'BulletinBoard'
   pod 'ViewAnimator'
   pod 'GoogleSignIn'
-
+  pod 'SkeletonView'
 end

@@ -16,11 +16,11 @@ class ProfileViewController: UIViewController {
     
     weak var delegate: ViewController!
     
-    var nameLabel: UILabel!
+    var nameTextField: UITextField!
     var netIDLabel: UILabel!
     var imageView: UIImageView!
-    var yearLabel: UITextField!
-    var majorLabel: UITextField!
+    var yearTextField: UITextField!
+    var majorTextField: UITextField!
     var bio: UITextView!
     var signOutButton: UIButton!
 
@@ -29,23 +29,23 @@ class ProfileViewController: UIViewController {
         title = "Profile"
         view.backgroundColor = .white
         
-        nameLabel = UILabel()
-        nameLabel.font = UIFont.systemFont(ofSize: 30, weight: .bold)
-        view.addSubview(nameLabel)
+        nameTextField = UITextField()
+        nameTextField.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        view.addSubview(nameTextField)
         
         netIDLabel = UILabel()
         netIDLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         view.addSubview(netIDLabel)
         
-        yearLabel = UITextField()
-        yearLabel.font = UIFont.systemFont(ofSize: 18, weight: .regular)
-        yearLabel.isUserInteractionEnabled = false
-        view.addSubview(yearLabel)
+        yearTextField = UITextField()
+        yearTextField.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        yearTextField.isUserInteractionEnabled = false
+        view.addSubview(yearTextField)
         
-        majorLabel = UITextField()
-        majorLabel.font = UIFont.systemFont(ofSize: 18, weight: .regular)
-        majorLabel.isUserInteractionEnabled = false
-        view.addSubview(majorLabel)
+        majorTextField = UITextField()
+        majorTextField.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        majorTextField.isUserInteractionEnabled = false
+        view.addSubview(majorTextField)
         
         bio = UITextView()
         bio.font = UIFont.systemFont(ofSize: 18, weight: .light)
@@ -67,10 +67,10 @@ class ProfileViewController: UIViewController {
                 let decoder = JSONDecoder()
                 if let userdata = try? decoder.decode(UserData.self, from: data) {
                     if userdata.success {
-                        self.nameLabel.text = userdata.data.name
+                        self.nameTextField.text = userdata.data.name
                         self.netIDLabel.text = userdata.data.net_id
-                        self.yearLabel.text = userdata.data.year
-                        self.majorLabel.text = userdata.data.major
+                        self.yearTextField.text = userdata.data.year
+                        self.majorTextField.text = userdata.data.major
                         self.bio.text = userdata.data.bio
                     }
                 }
@@ -86,24 +86,24 @@ class ProfileViewController: UIViewController {
     }
     
     func setUpConstraints() {
-        nameLabel.snp.makeConstraints{ (make) -> Void in
+        nameTextField.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.equalTo(view).offset(20)
         }
         netIDLabel.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(nameLabel)
-            make.leading.equalTo(nameLabel.snp.trailing).offset(20)
+            make.centerY.equalTo(nameTextField)
+            make.leading.equalTo(nameTextField.snp.trailing).offset(20)
         }
-        yearLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(nameLabel.snp.bottom).offset(20)
+        yearTextField.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(nameTextField.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
         }
-        majorLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(yearLabel)
-            make.leading.equalTo(yearLabel.snp.trailing).offset(10)
+        majorTextField.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(yearTextField)
+            make.leading.equalTo(yearTextField.snp.trailing).offset(10)
         }
         bio.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(majorLabel.snp.bottom).offset(20)
+            make.top.equalTo(majorTextField.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
             make.trailing.equalTo(view).offset(-20)
         }
@@ -115,17 +115,59 @@ class ProfileViewController: UIViewController {
     
 
     @objc func enableEditing() {
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(disableEditing))
-        yearLabel.isUserInteractionEnabled = true
-        majorLabel.isUserInteractionEnabled = true
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(save))
+        nameTextField.isUserInteractionEnabled = true
+        netIDLabel.isUserInteractionEnabled = true
+        yearTextField.isUserInteractionEnabled = true
+        majorTextField.isUserInteractionEnabled = true
         bio.isEditable = true
     }
     
-    @objc func disableEditing() {
+    @objc func save() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
-        yearLabel.isUserInteractionEnabled = false
-        majorLabel.isUserInteractionEnabled = false
+        nameTextField.isUserInteractionEnabled = false
+        netIDLabel.isUserInteractionEnabled = false
+        yearTextField.isUserInteractionEnabled = false
+        majorTextField.isUserInteractionEnabled = false
         bio.isEditable = false
+        
+        // Updates user information
+        let netID = UserDefaults.standard.string(forKey: "netID")!      // Net ID should always exist because user is logged in
+        let modifyUserURL = "http://localhost:5000/api/user/\(netID)/"
+        guard let name = nameTextField.text else {
+            return
+        }
+        guard let year = yearTextField.text else {
+            return
+        }
+        guard let major = majorTextField.text else {
+            return
+        }
+        guard let bio = bio.text else {
+            return
+        }
+        let parameters: Parameters = ["name": name,
+                                      "year": year,
+                                      "major": major,
+                                      "bio": bio]
+        Alamofire.request(modifyUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                print("Successful response")
+                if let user = try? decoder.decode(UserData.self, from: data) {
+                    if user.success {
+                        let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
+                        banner.show()
+                        self.dismiss(animated: true, completion: nil)
+                        return
+                    }
+                }
+            case let .failure(error):
+                print("Connection to server failed!")
+                print(error.localizedDescription)
+            }
+        }
     }
     
     @objc func signOut() {
@@ -140,5 +182,4 @@ class ProfileViewController: UIViewController {
         banner.show()
         delegate?.checkUsername()
     }
-
 }
