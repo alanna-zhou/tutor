@@ -161,7 +161,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         let netID = email[email.startIndex..<index]
         UserDefaults.standard.set(netID, forKey: "netID")
-        let checkUserURL = "http://localhost:5000/api/user/\(netID)/"
+        let checkUserURL = "http://35.190.144.148/api/user/\(netID)/"
         Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
             switch response.result {
             case let .success(data):

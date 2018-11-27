@@ -21,7 +21,7 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
     var bio: UITextView!
     var submitButton: UIButton!
     
-    let addUserURL = "http://localhost:5000/api/user/"
+    let addUserURL = "http://35.190.144.148/api/user/"
     
     override func viewDidLoad() {
         super.viewDidLoad()

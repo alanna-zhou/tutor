@@ -14,8 +14,8 @@ import ViewAnimator
 class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var course: Course!
-    var tutors: [User] = []
-    var tutees: [User] = []
+    var tutors: [String] = []
+    var tutees: [String] = []
     var tableView: UITableView!
     var tutorTuteeSegment: UISegmentedControl!
     
@@ -31,8 +31,8 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
         
         let course_subject = course.course_subject
         let course_num = course.course_num
-        courseTutorsURL = "http://localhost:5000/api/course/\(course_subject)/\(course_num)/tutors/"
-        courseTuteesURL = "http://localhost:5000/api/course/\(course_subject)/\(course_num)/tutees/"
+        courseTutorsURL = "http://35.190.144.148/api/course/\(course_subject)/\(course_num)/tutors/"
+        courseTuteesURL = "http://35.190.144.148/api/course/\(course_subject)/\(course_num)/tutees/"
         getCourseInfo()
         
         tutorTuteeSegment = UISegmentedControl()
@@ -80,8 +80,20 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 if let userdata = try? decoder.decode(UserArray.self, from: data) {
                     if userdata.success {
                         self.tutors = userdata.data
+                        print(self.tutors)
                     }
                 }
+            case let .failure(error):
+                print("Connection to server failed!")
+                print(error.localizedDescription)
+                self.tutors = []
+            }
+        }
+        
+        Alamofire.request(courseTutorsURL, method: .get).validate().responseJSON { response in
+            switch response.result {
+            case let .success(data):
+                print(data)
             case let .failure(error):
                 print("Connection to server failed!")
                 print(error.localizedDescription)
@@ -97,6 +109,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 if let userdata = try? decoder.decode(UserArray.self, from: data) {
                     if userdata.success {
                         self.tutees = userdata.data
+                        print(self.tutees)
                     }
                 }
             case let .failure(error):
@@ -120,14 +133,29 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: tutorTuteeReuseIdentifier, for: indexPath) as! TutorTuteeTableViewCell
-        var user: User
+        var user: String
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
             user = tutors[indexPath.row]
         }
         else {
             user = tutees[indexPath.row]
         }
-        cell.addInfo(user: user)
+        let checkUserURL = "http://35.190.144.148/api/user/\(user)/"
+        Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                if let userdata = try? decoder.decode(UserData.self, from: data) {
+                    if userdata.success {
+                        print("User exists in database.")
+                        cell.addInfo(user: userdata.data)
+                    }
+                }
+            case let .failure(error):
+                print("Couldn't connect to server!")
+                print(error.localizedDescription)
+            }
+        }
         cell.setNeedsUpdateConstraints()
         return cell
     }

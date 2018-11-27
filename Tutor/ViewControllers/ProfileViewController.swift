@@ -60,7 +60,7 @@ class ProfileViewController: UIViewController {
         view.addSubview(signOutButton)
         
         let netID = UserDefaults.standard.string(forKey: "netID")!      // Net ID should always exist because user is logged in
-        let checkUserURL = "http://localhost:5000/api/user/\(netID)/"
+        let checkUserURL = "http://35.190.144.148/api/user/\(netID)/"
         Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
             switch response.result {
             case let .success(data):
@@ -133,7 +133,7 @@ class ProfileViewController: UIViewController {
         
         // Updates user information
         let netID = UserDefaults.standard.string(forKey: "netID")!      // Net ID should always exist because user is logged in
-        let modifyUserURL = "http://localhost:5000/api/user/\(netID)/"
+        let modifyUserURL = "http://35.190.144.148/api/user/\(netID)/"
         guard let name = nameTextField.text else {
             return
         }

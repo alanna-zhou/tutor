@@ -20,7 +20,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     var filteredCourseNames: [String] = []
     var searchController: UISearchController!
     let courseWishlistReuseIdentifier = "courseWishlistReuseIdentifier"
-    let getCoursesURL = "http://localhost:5000/api/courses/"
+    let getCoursesURL = "http://35.190.144.148/api/courses/"
     
     let cellHeight: CGFloat = 60
     

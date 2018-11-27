@@ -21,5 +21,5 @@ struct UserData: Codable {
 
 struct UserArray: Codable {
     let success: Bool
-    let data: [User]
+    let data: [String]
 }
