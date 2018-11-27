@@ -13,8 +13,6 @@ import NotificationBannerSwift
 
 class ProfileViewController: UIViewController, UITextFieldDelegate {
 
-    var username: String!
-    var name: String!
     var yearLabel: UILabel!
     var yearTextField: UITextField!
     var majorLabel: UILabel!
@@ -24,16 +22,6 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     var submitButton: UIButton!
     
     let addUserURL = "https://localhost:5000/api/user/"
-    
-    init(username: String, name: String) {
-        super.init(nibName: nil, bundle: nil)
-        self.username = username
-        self.name = name
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -134,13 +122,14 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
             banner.show()
             return
         }
-        guard let username = username else {
+        guard let netID = UserDefaults.standard.string(forKey: "netID") else {
             return
         }
-        guard let name = name else {
+        guard let name = UserDefaults.standard.string(forKey: "fullName") else {
             return
         }
-        let parameters: Parameters = ["net_id": username,
+        
+        let parameters: Parameters = ["net_id": netID,
                                       "name": name,
                                       "year": year,
                                       "major": major,
