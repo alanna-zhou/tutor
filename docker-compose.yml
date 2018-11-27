@@ -1,0 +1,7 @@
+version: "3.4"
+
+services:
+  app:
+    image: alannazhou/app 
+    ports:
+      - "80:5000"
