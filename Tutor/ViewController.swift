@@ -162,25 +162,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         guard let index = email.range(of: "@")?.lowerBound else {
             return
         }
-        let netID = email[email.startIndex...index]
-            
+        let netID = email[email.startIndex..<index]
+        UserDefaults.standard.set(netID, forKey: "netID")
         let checkUserURL = "http://localhost:5000/api/user/\(netID)/"
+        print(checkUserURL)
         Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
             switch response.result {
             case let .success(data):
                 let decoder = JSONDecoder()
                 if let coursedata = try? decoder.decode(UsernameData.self, from: data) {
                     if coursedata.success {
-                        print("User exists in database")
+                        print("User exists in database.")
                         UserDefaults.standard.set(netID, forKey: "netID")
-                    }
-                    else {
-                        print("Creating a user")
-                        self.presentUserSetupView()
                     }
                 }
             case let .failure(error):
                 print("Couldn't connect to server!")
+                self.presentUserSetupView()
                 print(error.localizedDescription)
             }
         }

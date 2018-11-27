@@ -21,7 +21,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     var bio: UITextView!
     var submitButton: UIButton!
     
-    let addUserURL = "https://localhost:5000/api/user/"
+    let addUserURL = "http://localhost:5000/api/user/"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -134,6 +134,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
                                       "year": year,
                                       "major": major,
                                       "bio": bio]
+        print(parameters)
         Alamofire.request(addUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
             switch response.result {
             case let .success(data):
