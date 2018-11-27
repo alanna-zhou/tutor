@@ -5,11 +5,14 @@
 //  Created by Eli Zhang on 11/20/18.
 //  Copyright © 2018 Cornell AppDev. All rights reserved.
 //
-
 import UIKit
 import SnapKit
 import Alamofire
 import ViewAnimator
+import BLTNBoard
+import NotificationBannerSwift
+import GoogleSignIn
+import AudioToolbox
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var tutorTuteeSegment: UISegmentedControl!
@@ -17,6 +20,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var selectedTuteeCourses: [String] = []
     var netID: String!
     var name: String!
+    var bulletinManager: BLTNItemManager!
     
     var coursesLabel: UILabel!
     var tableView: UITableView!
@@ -28,7 +32,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         view.backgroundColor = .white
         checkUsername()
-    
+        
         coursesLabel = UILabel()
         coursesLabel.text = "Your Courses"
         coursesLabel.textColor = .black
@@ -43,11 +47,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tutorTuteeSegment.selectedSegmentIndex = 0
         tutorTuteeSegment.addTarget(self, action: #selector(swapRole), for: .valueChanged)
         
-        selectedTutorCourses = ["Filial Piety", "Smiley Face", "The Amazing Race", "Aliens", "Ratatouille"]
+        selectedTutorCourses = ["Aliens", "Ratatouille"]
         selectedTuteeCourses = ["Zoomba", "Roomba", "Tuba"]
         
         self.navigationItem.titleView = tutorTuteeSegment
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pushWishlistView))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(signOut))
         
         tableView = UITableView()
         tableView.register(CourseTableViewCell.self, forCellReuseIdentifier: courseReuseIdentifier)
@@ -78,11 +83,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
-    @objc func presentUserSetupView() {
-        let modalView = LoginViewController()
-        let navigationViewController = UINavigationController(rootViewController: modalView)
-        present(navigationViewController, animated: true, completion: nil)
-    }
+//    @objc func presentUserSetupView() {
+//        let modalView = LoginViewController()
+//        push(modalView, animated: true, completion: nil)
+//    }
     
     @objc func pushWishlistView() {
         let navigationView = WishlistViewController()
@@ -115,15 +119,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func checkUsername() {
-//        let defaults = UserDefaults.standard
-//        if let netID = defaults.object(forKey: "netID") as? String, let name = defaults.object(forKey: "name") as? String {
-//            self.netID = netID
-//            self.name = name
-//        }
-//        else {
-//            presentUserSetupView()
-//        }
-//
+        let userID = UserDefaults.standard.string(forKey: "userID")
+        if userID != nil {
+            bulletinManager?.dismissBulletin(animated: true)
+            let banner = NotificationBanner(title: "Logged in!", style: .success)
+            banner.show()
+            AudioServicesPlaySystemSound(1519)      // Vibrates
+            
+            login()
+            return
+        }
+        // Allow users to login
+        let page = LoginBulletinPage(mainView: self, title: "User Login")
+        page.delegate = self
+        page.descriptionText = "Log into Google to start finding tutors/tutees!"
+        page.isDismissable = false
+        page.appearance.actionButtonColor = UIColor(red: 0.294, green: 0.85, blue: 0.392, alpha: 1) // Green
+        page.alternativeButtonTitle = nil
+        bulletinManager = {
+            let rootItem: BLTNItem = page
+            return BLTNItemManager(rootItem: rootItem)
+        }()
+        bulletinManager.backgroundViewStyle = .blurredDark
+        bulletinManager.showBulletin(above: self)
+    }
+    
+    @objc func signOut() {
+        let defaults = UserDefaults.standard
+        let dictionary = defaults.dictionaryRepresentation()
+        dictionary.keys.forEach { key in
+            defaults.removeObject(forKey: key)
+        }
+        GIDSignIn.sharedInstance().signOut()
+        print("Signed out.")
+        checkUsername()
+    }
+    
+    func login() {
+        
     }
 }
-

@@ -25,6 +25,16 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     
     let addUserURL = "https://localhost:5000/api/user/"
     
+    init(username: String, name: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.username = username
+        self.name = name
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -140,7 +150,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
             case let .success(data):
                 let decoder = JSONDecoder()
                 print("Successful response")
-                if let username = try? decoder.decode(Username.self, from: data) {
+                if let username = try? decoder.decode(UsernameData.self, from: data) {
                     if username.success {
                         let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
                         banner.show()

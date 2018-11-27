@@ -15,7 +15,8 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     
     var courses: [Course] = []
     var courseNames: [String] = []
-    var filteredCourses: [String] = []
+    var filteredCourses: [Course] = []
+    var filteredCourseNames: [String] = []
     var searchController: UISearchController!
     let courseWishlistReuseIdentifier = "courseWishlistReuseIdentifier"
     let getCoursesURL = "http://localhost:5000/api/courses/"
@@ -45,9 +46,6 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
                             self.tableView.reloadData()
                         }
                     }
-                }
-                else {
-                    print("Couldn't decode tho rip")
                 }
             case let .failure(error):
                 print("Connection to server failed!")
@@ -90,7 +88,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: courseWishlistReuseIdentifier, for: indexPath) as! CourseWishlistTableViewCell
         let course: String
         if isFiltering() {
-            course = filteredCourses[indexPath.row]
+            course = filteredCourseNames[indexPath.row]
         } else {
             course = courseNames[indexPath.row]
         }
@@ -103,14 +101,27 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         return cellHeight
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var courseAtIndex: Course
+        if isFiltering() {
+            courseAtIndex = filteredCourses[indexPath.row]
+        } else {
+            courseAtIndex = courses[indexPath.row]
+        }
+        let tutorTuteeCatalogViewController = TutorTuteeCatalogViewController(course: courseAtIndex)
+        navigationController?.pushViewController(tutorTuteeCatalogViewController, animated: true)
+    }
+    
     func searchBarIsEmpty() -> Bool {
-        // Returns true if the text is empty or nil
         return searchController.searchBar.text?.isEmpty ?? true
     }
     
     func filterContentForSearchText(_ searchText: String, scope: String = "All") {
-        filteredCourses = courseNames.filter({( course: String) -> Bool in
-            return course.lowercased().contains(searchText.lowercased())
+        filteredCourseNames = courseNames.filter({( courseName: String) -> Bool in
+            return courseName.lowercased().contains(searchText.lowercased())
+        })
+        filteredCourses = courses.filter({( course: Course ) -> Bool in
+            return "\(course.course_subject) \(course.course_num): \(course.course_name)".lowercased().contains(searchText.lowercased())
         })
         tableView.reloadData()
     }
@@ -121,7 +132,6 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
 }
 
 extension WishlistViewController: UISearchResultsUpdating {
-    // MARK: - UISearchResultsUpdating Delegate
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchController.searchBar.text!)
     }

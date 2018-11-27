@@ -7,14 +7,14 @@
 //
 
 struct Username: Codable {
-    let success: Bool
-    let data: UsernameData
-}
-
-struct UsernameData: Codable {
     let net_id: String
     let name: String
     let year: String
     let major: String
     let bio: String
+}
+
+struct UsernameData: Codable {
+    let success: Bool
+    let data: Username
 }
