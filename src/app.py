@@ -79,6 +79,13 @@ def create_user():
   db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
 
+@app.route('/api/user/<string:net_id>/', methods=['GET'])
+def get_user(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'User does not exist!'}), 404
+  return json.dumps({'success': True, 'data': user.serialize()}), 200
+
 @app.route('/api/user/add-course/', methods=['POST'])
 def add_course_to_user():
   post_body = json.loads(request.data)
@@ -206,7 +213,9 @@ def get_course_tutors(course_subject, course_num):
     return json.dumps({'success': False, 'error': 'No tutors for this course yet!'}), 404
   tutors = []
   for uc in user_to_courses:
-    tutors.append(User.query.filter_by(id=uc.user_id).first().net_id)
+    tutor = User.query.filter_by(id=uc.user_id).first()
+    if is_valid_tutor:
+      tutors.append(tutor.net_id)
   return json.dumps({'success': True, 'data': tutors}), 200
 
 @app.route('/api/course/<string:course_subject>/<string:course_num>/tutees/', methods=['GET'])
@@ -219,7 +228,9 @@ def get_course_tutees(course_subject, course_num):
     return json.dumps({'success': False, 'error': 'No tutees for this course yet!'}), 404
   tutees = []
   for uc in user_to_courses:
-    tutees.append(User.query.filter_by(id=uc.user_id).first().net_id)
+    tutee = User.query.filter_by(id=uc.user_id).first()
+    if is_valid_tutee:
+      tutees.append(tutee.net_id)
   return json.dumps({'success': True, 'data': tutees}), 200
 
 @app.route('/api/match/', methods=['POST'])
@@ -229,7 +240,7 @@ def match_users():
   for k in keys:
     if k not in post_body:
       return json.dumps({'success': False, 'error': 
-          'Missing necessary parameter to add a match a tutor and tutee!'}), 404
+          'Missing necessary parameter to match a tutor and tutee!'}), 404
   course = Course.query.filter_by(course_subject=post_body.get('course_subject'), 
       course_num=post_body.get('course_num')).first()
   if course is None:
