@@ -79,6 +79,21 @@ def create_user():
   db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
 
+@app.route('/api/user/<string:net_id>/', methods=['POST'])
+def edit_user(net_id):
+  print('ENTERING EDIT USER')
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'User does not exist!'}), 404
+  post_body = json.loads(request.data)
+  print("POST BODY", post_body)
+  for value in post_body:
+    print("VALUE", value)
+    setattr(user, value, post_body.get(value))
+  user = User.query.filter_by(net_id=net_id).first()
+  return json.dumps({'success': True, 'data': user.serialize()}), 200
+
+
 @app.route('/api/user/<string:net_id>/', methods=['GET'])
 def get_user(net_id):
   user = User.query.filter_by(net_id=net_id).first()
