@@ -10,7 +10,9 @@ import SnapKit
 import Alamofire
 import ViewAnimator
 import BLTNBoard
+import NotificationBannerSwift
 import GoogleSignIn
+import AudioToolbox
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var tutorTuteeSegment: UISegmentedControl!
@@ -18,6 +20,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var selectedTuteeCourses: [String] = []
     var netID: String!
     var name: String!
+    var bulletinManager: BLTNItemManager!
     
     var coursesLabel: UILabel!
     var tableView: UITableView!
@@ -80,11 +83,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
-    @objc func presentUserSetupView() {
-        let modalView = LoginViewController()
-        let navigationViewController = UINavigationController(rootViewController: modalView)
-        present(navigationViewController, animated: true, completion: nil)
-    }
+//    @objc func presentUserSetupView() {
+//        let modalView = LoginViewController()
+//        push(modalView, animated: true, completion: nil)
+//    }
     
     @objc func pushWishlistView() {
         let navigationView = WishlistViewController()
@@ -119,24 +121,27 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func checkUsername() {
         let userID = UserDefaults.standard.string(forKey: "userID")
         if userID != nil {
+            bulletinManager?.dismissBulletin(animated: true)
+            let banner = NotificationBanner(title: "Logged in!", style: .success)
+            banner.show()
+            AudioServicesPlaySystemSound(1519)      // Vibrates
+            
+            login()
             return
         }
         // Allow users to login
         let page = LoginBulletinPage(mainView: self, title: "User Login")
+        page.delegate = self
         page.descriptionText = "Log into Google to start finding tutors/tutees!"
         page.isDismissable = false
         page.appearance.actionButtonColor = UIColor(red: 0.294, green: 0.85, blue: 0.392, alpha: 1) // Green
         page.alternativeButtonTitle = nil
-        let bulletinManager: BLTNItemManager = {
+        bulletinManager = {
             let rootItem: BLTNItem = page
             return BLTNItemManager(rootItem: rootItem)
         }()
         bulletinManager.backgroundViewStyle = .blurredDark
-        page.actionHandler = { (item: BLTNActionItem) in bulletinManager.dismissBulletin(animated: true)
-            self.presentUserSetupView()
-        }
         bulletinManager.showBulletin(above: self)
-        // Checking if user is logged in
     }
     
     @objc func signOut() {
@@ -148,5 +153,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         GIDSignIn.sharedInstance().signOut()
         print("Signed out.")
         checkUsername()
+    }
+    
+    func login() {
+        
     }
 }

@@ -15,6 +15,7 @@ class LoginBulletinPage: BLTNPageItem, GIDSignInUIDelegate {
     
     var signInButton: GIDSignInButton!
     var viewController: UIViewController!
+    weak var delegate: ViewController!
     
     init(mainView: UIViewController, title: String) {
         super.init(title: title)
@@ -33,7 +34,7 @@ class LoginBulletinPage: BLTNPageItem, GIDSignInUIDelegate {
               present viewController: UIViewController!) {
         viewController.present(viewController, animated: true, completion: nil)
     }
-    
+
     // Dismiss the "Sign in with Google" view
     func sign(_ signIn: GIDSignIn!,
               dismiss viewController: UIViewController!) {

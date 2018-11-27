@@ -14,7 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         GIDSignIn.sharedInstance().clientID = "110222641219-49s9oettgqsvbrbvn0dses9k681ctl7v.apps.googleusercontent.com"
         GIDSignIn.sharedInstance().delegate = self
@@ -48,6 +47,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             UserDefaults.standard.set(givenName, forKey: "givenName")
             UserDefaults.standard.set(familyName, forKey: "familyName")
             UserDefaults.standard.set(email, forKey: "email")
+            let rootView: ViewController = (window?.rootViewController as! UINavigationController).viewControllers.first as! ViewController
+            rootView.checkUsername()
         }
     }
     
