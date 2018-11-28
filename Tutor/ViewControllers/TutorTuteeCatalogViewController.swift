@@ -48,6 +48,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
         tableView.register(TutorTuteeTableViewCell.self, forCellReuseIdentifier: tutorTuteeReuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         
         let rightFade = AnimationType.from(direction: .right, offset: 60.0)
         tableView.animate(animations: [rightFade], duration: 0.5)
@@ -58,7 +59,10 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     
     func setUpConstraints() {
         tableView.snp.makeConstraints { (make) -> Void in
-            make.edges.equalTo(view)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
         }
     }
     
@@ -138,6 +142,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                     if userdata.success {
                         print("User exists in database.")
                         cell.addInfo(user: userdata.data)
+                        cell.setColor(tutor: self.tutorTuteeSegment.selectedSegmentIndex == 0)
                     }
                 }
             case let .failure(error):

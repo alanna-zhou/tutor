@@ -9,6 +9,7 @@
 import UIKit
 import SnapKit
 import Alamofire
+import NotificationBannerSwift
 
 class SelectedUserViewController: UIViewController {
     var netID: String!
@@ -50,6 +51,7 @@ class SelectedUserViewController: UIViewController {
         addButton.setTitle("Add", for: .normal)
         addButton.setTitleColor(.black, for: .normal)
         addButton.titleLabel?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        addButton.addTarget(self, action: #selector(addUser), for: .touchUpInside)
 
 //        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTutor))
         
@@ -112,12 +114,12 @@ class SelectedUserViewController: UIViewController {
     }
     
     
-    @objc func addTutor(sender: UIButton) {
+    @objc func addUser(sender: UIButton) {
         //have tutor appear on user's profile (Alamofire to post)
-        
-        self.dismiss(animated: true)
+        let banner = NotificationBanner(title: "User added!", style: .success)
+        banner.show()
+        navigationController?.popViewController(animated: true)
     }
-    
 }
 
 
