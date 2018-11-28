@@ -20,7 +20,6 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     var filteredCourseNames: [String] = []
     var searchController: UISearchController!
     let courseWishlistReuseIdentifier = "courseWishlistReuseIdentifier"
-    let getCoursesURL = "http://35.190.144.148/api/courses/"
     
     let cellHeight: CGFloat = 60
     
@@ -33,28 +32,12 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        // Getting courses from server
-        Alamofire.request(getCoursesURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                print("Successful response")
-                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
-                    if coursedata.success {
-                        self.courses = coursedata.data
-                        for course in self.courses {
-                            self.courseNames.append("\(course.course_subject) \(course.course_num): \(course.course_name)")
-                            self.tableView.reloadData()
-                        }
-                    }
-                }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-                self.courses = []
-            }
-        }
-        
+        NetworkManager.getAllCourses(completion: { courses in
+                                    for course in self.courses {
+                                        self.courseNames.append("\(course.course_subject) \(course.course_num): \(course.course_name)")
+                                    }
+                                    DispatchQueue.main.async {self.tableView.reloadData()}},
+                                     failure: { () in self.courses = []})
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -139,4 +122,3 @@ extension WishlistViewController: UISearchResultsUpdating {
         filterContentForSearchText(searchController.searchBar.text!)
     }
 }
-

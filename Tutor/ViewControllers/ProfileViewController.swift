@@ -60,25 +60,14 @@ class ProfileViewController: UIViewController {
         view.addSubview(signOutButton)
         
         let netID = UserDefaults.standard.string(forKey: "netID")!      // Net ID should always exist because user is logged in
-        let checkUserURL = "http://35.190.144.148/api/user/\(netID)/"
-        Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                if let userdata = try? decoder.decode(UserData.self, from: data) {
-                    if userdata.success {
-                        self.nameTextField.text = userdata.data.name
-                        self.netIDLabel.text = userdata.data.net_id
-                        self.yearTextField.text = userdata.data.year
-                        self.majorTextField.text = userdata.data.major
-                        self.bio.text = userdata.data.bio
-                    }
-                }
-            case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
-            }
-        }
+        NetworkManager.getUserInfo(netID: netID,
+                                   completion: { user in
+                                    self.nameTextField.text = user.name
+                                    self.netIDLabel.text = user.net_id
+                                    self.yearTextField.text = user.year
+                                    self.majorTextField.text = user.major
+                                    self.bio.text = user.bio},
+                                   failure: {})
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
 
@@ -133,7 +122,6 @@ class ProfileViewController: UIViewController {
         
         // Updates user information
         let netID = UserDefaults.standard.string(forKey: "netID")!      // Net ID should always exist because user is logged in
-        let modifyUserURL = "http://35.190.144.148/api/user/\(netID)/"
         guard let name = nameTextField.text else {
             return
         }
@@ -146,28 +134,11 @@ class ProfileViewController: UIViewController {
         guard let bio = bio.text else {
             return
         }
-        let parameters: Parameters = ["name": name,
-                                      "year": year,
-                                      "major": major,
-                                      "bio": bio]
-        Alamofire.request(modifyUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                print("Successful response")
-                if let user = try? decoder.decode(UserData.self, from: data) {
-                    if user.success {
-                        let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
-                        banner.show()
-                        self.dismiss(animated: true, completion: nil)
-                        return
-                    }
-                }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-            }
-        }
+        NetworkManager.modifyUser(netID: netID, name: name, year: year, major: major, bio: bio, completion: {() in
+            let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
+            banner.show()
+            self.dismiss(animated: true, completion: nil)
+        })
     }
     
     @objc func signOut() {

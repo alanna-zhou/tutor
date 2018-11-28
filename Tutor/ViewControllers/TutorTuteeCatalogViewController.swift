@@ -24,6 +24,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     
     let tutorTuteeReuseIdentifier = "tutorTuteeReuseIdentifier"
     let cellHeight: CGFloat = 90
+    let cellSpacingHeight: CGFloat = 20
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,10 +60,10 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     
     func setUpConstraints() {
         tableView.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.equalTo(view).offset(20)
             make.trailing.equalTo(view).offset(-20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
@@ -165,7 +166,17 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
         } else {
             userAtIndex = tutees[indexPath.row]
         }
-        let userProfileViewController = SelectedUserViewController(netID: userAtIndex)
+        let userProfileViewController = SelectedUserViewController(netID: userAtIndex, tutor: tutorTuteeSegment.selectedSegmentIndex == 0, course: self.course)
         navigationController?.pushViewController(userProfileViewController, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return cellSpacingHeight
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = UIColor.clear
+        return headerView
     }
 }

@@ -155,59 +155,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         let netID = email[email.startIndex..<index]
         UserDefaults.standard.set(netID, forKey: "netID")
-        let checkUserURL = "http://35.190.144.148/api/user/\(netID)/"
-        Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                if let userdata = try? decoder.decode(UserData.self, from: data) {
-                    if userdata.success {
-                        print("User exists in database.")
-                        UserDefaults.standard.set(netID, forKey: "netID")
-                    }
-                }
-            case let .failure(error):
-                print("Couldn't connect to server!")
-                self.presentUserSetupView()
-                print(error.localizedDescription)
-            }
-        }
         
-        let tutorCoursesURL = "http://35.190.144.148/api/tutor/\(netID)/courses/"
-        let tuteeCoursesURL = "http://35.190.144.148/api/tutee/\(netID)/courses/"
+        NetworkManager.getUserInfo(netID: String(netID),
+            completion: { user in UserDefaults.standard.set(netID, forKey: "netID")},       // Success
+            failure: { () in self.presentUserSetupView()})     // Failure
         
-        Alamofire.request(tutorCoursesURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
-                    if coursedata.success {
-                        self.selectedTutorCourses = coursedata.data
-                        print(self.selectedTutorCourses)
-                        self.tableView.reloadData()
-                    }
-                }
-            case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
-            }
-        }
-        
-        Alamofire.request(tuteeCoursesURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
-                    if coursedata.success {
-                        self.selectedTuteeCourses = coursedata.data
-                        print(self.selectedTuteeCourses)
-                        self.tableView.reloadData()
-                    }
-                }
-            case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
-            }
-        }
+        NetworkManager.getTutorCourses(netID: String(netID),
+                                       completion: { courses in
+                                        self.selectedTutorCourses = courses
+                                        DispatchQueue.main.async {self.tableView.reloadData()}})
+        NetworkManager.getTuteeCourses(netID: String(netID),
+                                       completion: { courses in
+                                        self.selectedTuteeCourses = courses
+                                        DispatchQueue.main.async {self.tableView.reloadData()}})
     }
 }

@@ -21,8 +21,6 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
     var bio: UITextView!
     var submitButton: UIButton!
     
-    let addUserURL = "http://35.190.144.148/api/user/"
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -130,29 +128,11 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        let parameters: Parameters = ["net_id": netID,
-                                      "name": name,
-                                      "year": year,
-                                      "major": major,
-                                      "bio": bio]
-        Alamofire.request(addUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                print("Successful response")
-                if let user = try? decoder.decode(UserData.self, from: data) {
-                    if user.success {
-                        let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
-                        banner.show()
-                        self.dismiss(animated: true, completion: nil)
-                        return
-                    }
-                }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-            }
-        }
+        NetworkManager.addUser(netID: netID, name: name, year: year, major: major, bio: bio, completion: { () in
+            let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
+            banner.show()
+            self.dismiss(animated: true, completion: nil)
+        })
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

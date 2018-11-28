@@ -19,10 +19,14 @@ class SelectedUserViewController: UIViewController {
     var gradYearTitleLabel: UILabel!
     var bioTitleLabel: UILabel!
     var addButton: UIButton!
+    var tutor: Bool!
+    var course: Course!
     
-    init(netID: String) {
+    init(netID: String, tutor: Bool, course: Course) {
         super.init(nibName: nil, bundle: nil)
         self.netID = netID
+        self.tutor = tutor
+        self.course = course
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -115,9 +119,44 @@ class SelectedUserViewController: UIViewController {
     
     
     @objc func addUser(sender: UIButton) {
-        //have tutor appear on user's profile (Alamofire to post)
-        let banner = NotificationBanner(title: "User added!", style: .success)
-        banner.show()
+        let matchUsersURL = "http://35.190.144.148/api/match/"
+        var tutorID: String
+        var tuteeID: String
+        guard let userNetID = UserDefaults.standard.string(forKey: "netID") else {
+            return
+        }
+        if tutor {
+            tutorID = self.netID
+            tuteeID = userNetID
+        }
+        else {
+            tutorID = userNetID
+            tuteeID = self.netID
+        }
+        let parameters: Parameters = ["tutor_net_id": tutorID,
+                                       "tutee_net_id": tuteeID,
+                                       "course_subject": course.course_subject,
+                                       "course_num": course.course_num]
+        Alamofire.request(matchUsersURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                print("Successful response")
+                if let userMatch = try? decoder.decode(UserMatchData.self, from: data) {
+                    if userMatch.success {
+                        let banner = NotificationBanner(title: "User added!", style: .success)
+                        banner.show()
+                    }
+                }
+                else {
+                    let banner = NotificationBanner(title: "FAIL!", style: .danger)
+                    banner.show()
+                }
+            case let .failure(error):
+                print("Connection to server failed!")
+                print(error.localizedDescription)
+            }
+        }
         navigationController?.popViewController(animated: true)
     }
 }

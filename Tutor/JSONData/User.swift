@@ -23,3 +23,15 @@ struct UserArray: Codable {
     let success: Bool
     let data: [String]
 }
+
+struct UserMatchData: Codable {
+    let success: Bool
+    let data: UserMatch
+}
+
+struct UserMatch: Codable {
+    let tutor_net_id: String
+    let tutee_net_id: String
+    let course_subject: String
+    let course_num: Int
+}
