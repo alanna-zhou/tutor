@@ -16,8 +16,8 @@ import AudioToolbox
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var tutorTuteeSegment: UISegmentedControl!
-    var selectedTutorCourses: [String] = []
-    var selectedTuteeCourses: [String] = []
+    var selectedTutorCourses: [Course] = []
+    var selectedTuteeCourses: [Course] = []
     var bulletinManager: BLTNItemManager!
     
     var coursesLabel: UILabel!
@@ -44,10 +44,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tutorTuteeSegment.insertSegment(withTitle: "Tutee", at: 1, animated: true)
         tutorTuteeSegment.selectedSegmentIndex = 0
         tutorTuteeSegment.addTarget(self, action: #selector(swapRole), for: .valueChanged)
-        
-        selectedTutorCourses = ["Aliens", "Ratatouille"]
-        selectedTuteeCourses = ["Zoomba", "Roomba", "Tuba"]
-        
+
         self.navigationItem.titleView = tutorTuteeSegment
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pushWishlistView))
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "Gear"), style: .plain, target: self, action: #selector(pushProfileView))
@@ -57,12 +54,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
         
-//        let rightFade = AnimationType.from(direction: .right, offset: 60.0)
-//        tableView.animate(animations: [rightFade], duration: 0.5)
-        let fromAnimation = AnimationType.from(direction: .right, offset: 30.0)
-        let zoomAnimation = AnimationType.zoom(scale: 0.2)
-        UIView.animate(views: tableView.visibleCells,
-                       animations: [fromAnimation, zoomAnimation], delay: 0.5)
+        let rightFade = AnimationType.from(direction: .right, offset: 60.0)
+        tableView.animate(animations: [rightFade], duration: 0.5)
         view.addSubview(tableView)
         
         setUpConstraints()
@@ -110,7 +103,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: courseReuseIdentifier, for: indexPath) as! CourseTableViewCell
-        var course: String
+        var course: Course
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
             course = selectedTutorCourses[indexPath.row]
         }
@@ -152,6 +145,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         bulletinManager.showBulletin(above: self)
     }
     
+    // TODO: Multiple views presented at the same time
     func login() {
         guard let email = UserDefaults.standard.string(forKey: "email") else {
             return
@@ -175,6 +169,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             case let .failure(error):
                 print("Couldn't connect to server!")
                 self.presentUserSetupView()
+                print(error.localizedDescription)
+            }
+        }
+        
+        let tutorCoursesURL = "http://35.190.144.148/api/tutor/\(netID)/courses/"
+        let tuteeCoursesURL = "http://35.190.144.148/api/tutee/\(netID)/courses/"
+        
+        Alamofire.request(tutorCoursesURL, method: .get).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
+                    if coursedata.success {
+                        self.selectedTutorCourses = coursedata.data
+                        print(self.selectedTutorCourses)
+                        self.tableView.reloadData()
+                    }
+                }
+            case let .failure(error):
+                print("Couldn't connect to server!")
+                print(error.localizedDescription)
+            }
+        }
+        
+        Alamofire.request(tuteeCoursesURL, method: .get).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                if let coursedata = try? decoder.decode(CourseData.self, from: data) {
+                    if coursedata.success {
+                        self.selectedTuteeCourses = coursedata.data
+                        print(self.selectedTuteeCourses)
+                        self.tableView.reloadData()
+                    }
+                }
+            case let .failure(error):
+                print("Couldn't connect to server!")
                 print(error.localizedDescription)
             }
         }

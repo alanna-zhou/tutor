@@ -12,18 +12,18 @@ import SnapKit
 class TutorTuteeTableViewCell: UITableViewCell {
 
     var nameLabel: UILabel!
-    var netIDLabel: UILabel!
+    var userInfoLabel: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         nameLabel = UILabel()
-        nameLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
+        nameLabel.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
         contentView.addSubview(nameLabel)
         
-        netIDLabel = UILabel()
-        netIDLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
-        contentView.addSubview(netIDLabel)
+        userInfoLabel = UILabel()
+        userInfoLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        contentView.addSubview(userInfoLabel)
     }
     
     override func updateConstraints() {
@@ -32,8 +32,8 @@ class TutorTuteeTableViewCell: UITableViewCell {
             make.leading.equalTo(contentView).offset(20)
             make.trailing.equalTo(contentView).offset(-20)
         }
-        netIDLabel.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(contentView.snp.bottom).offset(30)
+        userInfoLabel.snp.makeConstraints { (make) -> Void in
+            make.top.equalTo(nameLabel.snp.bottom).offset(10)
             make.leading.trailing.equalTo(nameLabel)
         }
         super.updateConstraints()
@@ -45,6 +45,6 @@ class TutorTuteeTableViewCell: UITableViewCell {
     
     func addInfo(user: User) {
         nameLabel.text = user.name
-        netIDLabel.text = user.net_id
+        userInfoLabel.text = "\(user.net_id) • \(user.year) • \(user.major)"
     }
 }

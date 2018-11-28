@@ -34,7 +34,7 @@ class CourseTableViewCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
-    func addInfo(course: String) {
-        courseLabel.text = course
+    func addInfo(course: Course) {
+        courseLabel.text = "\(course.course_subject) \(course.course_num): \(course.course_name)"
     }
 }

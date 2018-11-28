@@ -23,7 +23,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     var courseTuteesURL: String!
     
     let tutorTuteeReuseIdentifier = "tutorTuteeReuseIdentifier"
-    let cellHeight: CGFloat = 70
+    let cellHeight: CGFloat = 90
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,20 +80,9 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 if let userdata = try? decoder.decode(UserArray.self, from: data) {
                     if userdata.success {
                         self.tutors = userdata.data
-                        print(self.tutors)
+                        self.tableView?.reloadData()
                     }
                 }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-                self.tutors = []
-            }
-        }
-        
-        Alamofire.request(courseTutorsURL, method: .get).validate().responseJSON { response in
-            switch response.result {
-            case let .success(data):
-                print(data)
             case let .failure(error):
                 print("Connection to server failed!")
                 print(error.localizedDescription)
@@ -109,7 +98,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 if let userdata = try? decoder.decode(UserArray.self, from: data) {
                     if userdata.success {
                         self.tutees = userdata.data
-                        print(self.tutees)
+                        self.tableView?.reloadData()
                     }
                 }
             case let .failure(error):
@@ -162,5 +151,16 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return cellHeight
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var userAtIndex: String
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            userAtIndex = tutors[indexPath.row]
+        } else {
+            userAtIndex = tutees[indexPath.row]
+        }
+        let userProfileViewController = SelectedUserViewController(netID: userAtIndex)
+        navigationController?.pushViewController(userProfileViewController, animated: true)
     }
 }
