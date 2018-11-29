@@ -32,8 +32,9 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        NetworkManager.getAllCourses(completion: { courses in
-                                    for course in self.courses {
+        NetworkManager.getAllCourses(completion: { courseList in
+                                    self.courses = courseList
+                                    for course in courseList {
                                         self.courseNames.append("\(course.course_subject) \(course.course_num): \(course.course_name)")
                                     }
                                     DispatchQueue.main.async {self.tableView.reloadData()}},

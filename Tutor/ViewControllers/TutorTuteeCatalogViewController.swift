@@ -30,10 +30,6 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        let course_subject = course.course_subject
-        let course_num = course.course_num
-        courseTutorsURL = "http://35.190.144.148/api/course/\(course_subject)/\(course_num)/tutors/"
-        courseTuteesURL = "http://35.190.144.148/api/course/\(course_subject)/\(course_num)/tutees/"
         getCourseInfo()
         
         tutorTuteeSegment = UISegmentedControl()
@@ -77,41 +73,12 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func getCourseInfo() {
-        Alamofire.request(courseTutorsURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                print("Successful response")
-                if let userdata = try? decoder.decode(UserArray.self, from: data) {
-                    if userdata.success {
-                        self.tutors = userdata.data
-                        self.tableView?.reloadData()
-                    }
-                }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-                self.tutors = []
-            }
-        }
-        
-        Alamofire.request(courseTuteesURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                print("Successful response")
-                if let userdata = try? decoder.decode(UserArray.self, from: data) {
-                    if userdata.success {
-                        self.tutees = userdata.data
-                        self.tableView?.reloadData()
-                    }
-                }
-            case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
-                self.tutees = []
-            }
-        }
+        NetworkManager.getCourseTutors(subject: course.course_subject, number: course.course_num, completion: { users in
+            self.tutors = users
+            DispatchQueue.main.async {self.tableView?.reloadData()}}, failure: { () in self.tutors = []})
+        NetworkManager.getCourseTutees(subject: course.course_subject, number: course.course_num, completion: { users in
+            self.tutees = users
+            DispatchQueue.main.async {self.tableView?.reloadData()}}, failure: { () in self.tutees = []})
     }
     
     @objc func swapRole() {
