@@ -172,12 +172,36 @@ class NetworkManager {
         }
     }
     
+    static func addCourseToUser(netID: String, isTutor: Bool, subject: String, number: Int, completion: @escaping () -> Void) {
+        let addCourseURL = "http://35.190.144.148/api/user/add-course/"
+        let parameters: Parameters = ["net_id": netID,
+                                      "is_tutor": isTutor,
+                                      "course_subject": subject,
+                                      "course_num": number]
+        Alamofire.request(addCourseURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                print("Successful response")
+                if let addCourseInfo = try? decoder.decode(AddCourseData.self, from: data) {
+                    if addCourseInfo.success {
+                        completion()
+                    }
+                }
+            case let .failure(error):
+                print("Connection to server failed!")
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     static func matchUsers(tutorID: String, tuteeID: String, course: Course, completion: @escaping() -> Void) {
-        let matchUsersURL = "http://35.190.144.148/api/match/"
+        let matchUsersURL = "http://35.190.144.148/api/match"
         let parameters: Parameters = ["tutor_net_id": tutorID,
                                       "tutee_net_id": tuteeID,
                                       "course_subject": course.course_subject,
                                       "course_num": course.course_num]
+        print(parameters)
         Alamofire.request(matchUsersURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
             switch response.result {
             case let .success(data):

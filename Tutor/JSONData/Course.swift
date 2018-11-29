@@ -16,3 +16,16 @@ struct Course: Codable {
     let course_num: Int
     let course_subject: String
 }
+
+struct AddCourse: Codable {
+    let net_id: String
+    let is_tutor: Bool // true if tutor, false if tutee
+    let course_subject: String
+    let course_num: Int
+    let course_number: String
+}
+
+struct AddCourseData: Codable {
+    let success: Bool
+    let data: AddCourse
+}

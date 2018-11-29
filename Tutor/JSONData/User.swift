@@ -6,17 +6,18 @@
 //  Copyright © 2018 Cornell AppDev. All rights reserved.
 //
 
+struct UserData: Codable {
+    let success: Bool
+    let data: User
+}
+
 struct User: Codable {
     let net_id: String
     let name: String
     let year: String
     let major: String
     let bio: String
-}
-
-struct UserData: Codable {
-    let success: Bool
-    let data: User
+    let url: String
 }
 
 struct UserArray: Codable {

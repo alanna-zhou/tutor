@@ -31,6 +31,7 @@ class ProfileViewController: UIViewController {
         
         nameTextField = UITextField()
         nameTextField.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        nameTextField.placeholder = "Name"
         view.addSubview(nameTextField)
         
         netIDLabel = UILabel()
@@ -40,16 +41,18 @@ class ProfileViewController: UIViewController {
         yearTextField = UITextField()
         yearTextField.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         yearTextField.isUserInteractionEnabled = false
+        yearTextField.placeholder = "Year"
         view.addSubview(yearTextField)
         
         majorTextField = UITextField()
         majorTextField.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         majorTextField.isUserInteractionEnabled = false
+        majorTextField.placeholder = "Major"
         view.addSubview(majorTextField)
         
         bio = UITextView()
         bio.font = UIFont.systemFont(ofSize: 18, weight: .light)
-        bio.isEditable = false
+        bio.textColor = .black
         view.addSubview(bio)
         
         signOutButton = UIButton()
@@ -66,7 +69,9 @@ class ProfileViewController: UIViewController {
                                     self.netIDLabel.text = user.net_id
                                     self.yearTextField.text = user.year
                                     self.majorTextField.text = user.major
-                                    self.bio.text = user.bio},
+                                    self.bio.text = user.bio
+                                    self.bio.isEditable = false
+        },
                                    failure: {})
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
@@ -135,7 +140,7 @@ class ProfileViewController: UIViewController {
             return
         }
         NetworkManager.modifyUser(netID: netID, name: name, year: year, major: major, bio: bio, completion: {() in
-            let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
+            let banner = NotificationBanner(title: "Saved updated info!", style: .success)
             banner.show()
             self.dismiss(animated: true, completion: nil)
         })

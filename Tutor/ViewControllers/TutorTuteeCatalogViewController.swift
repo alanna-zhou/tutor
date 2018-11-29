@@ -10,6 +10,8 @@ import UIKit
 import Alamofire
 import SnapKit
 import ViewAnimator
+import BLTNBoard
+import NotificationBannerSwift
 
 class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -18,6 +20,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     var tutees: [String] = []
     var tableView: UITableView!
     var tutorTuteeSegment: UISegmentedControl!
+    var bulletinManager: BLTNItemManager!
     
     var courseTutorsURL: String!
     var courseTuteesURL: String!
@@ -75,49 +78,89 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     func getCourseInfo() {
         NetworkManager.getCourseTutors(subject: course.course_subject, number: course.course_num, completion: { users in
             self.tutors = users
+            self.checkEmpty()
             DispatchQueue.main.async {self.tableView?.reloadData()}}, failure: { () in self.tutors = []})
         NetworkManager.getCourseTutees(subject: course.course_subject, number: course.course_num, completion: { users in
             self.tutees = users
             DispatchQueue.main.async {self.tableView?.reloadData()}}, failure: { () in self.tutees = []})
     }
     
+    func checkEmpty() {
+        let page = BLTNPageItem(title: "Add Class")
+        page.actionButtonTitle = "Sure"
+        page.alternativeButtonTitle = "Not now"
+        page.isDismissable = true
+        page.appearance.actionButtonColor = UIColor(red: 0.294, green: 0.85, blue: 0.392, alpha: 1) // Green
+        page.requiresCloseButton = false
+        if tutorTuteeSegment.selectedSegmentIndex == 0 && tutors.count == 0 {
+            page.descriptionText = "This course has no tutors. Would you like to add yourself to the tutee list?"
+            page.actionHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+                let netID = UserDefaults.standard.string(forKey: "netID")!
+                NetworkManager.addCourseToUser(netID: netID, isTutor: false, subject: self.course.course_subject, number: self.course.course_num, completion: {})
+                let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
+                banner.show()
+                (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
+            }
+            page.alternativeHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+            }
+        }
+        else if tutorTuteeSegment.selectedSegmentIndex == 1 && tutees.count == 0 {
+            page.descriptionText = "This course has no tutees. Would you like to add yourself to the tutor list?"
+            page.actionHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+                let netID = UserDefaults.standard.string(forKey: "netID")!
+                NetworkManager.addCourseToUser(netID: netID, isTutor: true, subject: self.course.course_subject, number: self.course.course_num, completion: {})
+                let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
+                banner.show()
+                (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
+            }
+            page.alternativeHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+            }
+        }
+        else {
+            return
+        }
+        bulletinManager = {
+            let rootItem: BLTNItem = page
+            return BLTNItemManager(rootItem: rootItem)
+        }()
+        bulletinManager.backgroundViewStyle = .blurredDark
+        bulletinManager.showBulletin(above: self)
+    }
+    
     @objc func swapRole() {
         tableView.reloadData()
+        checkEmpty()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            return tutors.count
+            return self.tutors.count
         }
-        return tutees.count
+        return self.tutees.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: tutorTuteeReuseIdentifier, for: indexPath) as! TutorTuteeTableViewCell
         var user: String
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            user = tutors[indexPath.row]
+            user = tutors[indexPath.section]
         }
         else {
-            user = tutees[indexPath.row]
+            user = tutees[indexPath.section]
         }
-        let checkUserURL = "http://35.190.144.148/api/user/\(user)/"
-        Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                if let userdata = try? decoder.decode(UserData.self, from: data) {
-                    if userdata.success {
-                        print("User exists in database.")
-                        cell.addInfo(user: userdata.data)
-                        cell.setColor(tutor: self.tutorTuteeSegment.selectedSegmentIndex == 0)
-                    }
-                }
-            case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
-            }
-        }
+        NetworkManager.getUserInfo(netID: user,
+                                   completion: {user in
+                                    print("User exists in database.")
+            cell.addInfo(user: user, isTutor: self.tutorTuteeSegment.selectedSegmentIndex == 0)},
+                                   failure: {})
         cell.setNeedsUpdateConstraints()
         return cell
     }
@@ -129,11 +172,11 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var userAtIndex: String
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            userAtIndex = tutors[indexPath.row]
+            userAtIndex = tutors[indexPath.section]
         } else {
-            userAtIndex = tutees[indexPath.row]
+            userAtIndex = tutees[indexPath.section]
         }
-        let userProfileViewController = SelectedUserViewController(netID: userAtIndex, tutor: tutorTuteeSegment.selectedSegmentIndex == 0, course: self.course)
+        let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 0, course: self.course)
         navigationController?.pushViewController(userProfileViewController, animated: true)
     }
     

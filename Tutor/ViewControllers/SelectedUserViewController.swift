@@ -19,13 +19,13 @@ class SelectedUserViewController: UIViewController {
     var gradYearTitleLabel: UILabel!
     var bioTitleLabel: UILabel!
     var addButton: UIButton!
-    var tutor: Bool!
+    var isTutor: Bool!
     var course: Course!
     
-    init(netID: String, tutor: Bool, course: Course) {
+    init(netID: String, isTutor: Bool, course: Course) {
         super.init(nibName: nil, bundle: nil)
         self.netID = netID
-        self.tutor = tutor
+        self.isTutor = isTutor
         self.course = course
     }
     
@@ -66,25 +66,14 @@ class SelectedUserViewController: UIViewController {
         view.addSubview(bioTitleLabel)
         view.addSubview(addButton)
         
-        let checkUserURL = "http://35.190.144.148/api/user/\(netID!)/"  // NetID should always be initialized in init
-        Alamofire.request(checkUserURL, method: .get).validate().responseData { response in
-            switch response.result {
-            case let .success(data):
-                let decoder = JSONDecoder()
-                if let userdata = try? decoder.decode(UserData.self, from: data) {
-                    if userdata.success {
-                        self.fullNameLabel.text = userdata.data.name
-                        self.netIDLabel.text = userdata.data.net_id
-                        self.gradYearTitleLabel.text = userdata.data.year
-                        self.majorTitleLabel.text = userdata.data.major
-                        self.bioTitleLabel.text = userdata.data.bio
-                    }
-                }
-            case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
-            }
-        }
+        NetworkManager.getUserInfo(netID: netID,
+                                   completion: { user in
+                                    self.fullNameLabel.text = user.name
+                                    self.netIDLabel.text = user.net_id
+                                    self.gradYearTitleLabel.text = user.year
+                                    self.majorTitleLabel.text = user.major
+                                    self.bioTitleLabel.text = user.bio},
+                                   failure: {})
         
         setUpConstraints()
         
@@ -124,17 +113,20 @@ class SelectedUserViewController: UIViewController {
         guard let userNetID = UserDefaults.standard.string(forKey: "netID") else {
             return
         }
-        if tutor {
+        if isTutor {
             tutorID = self.netID
             tuteeID = userNetID
+            
         }
         else {
             tutorID = userNetID
             tuteeID = self.netID
         }
+        NetworkManager.addCourseToUser(netID: self.netID, isTutor: isTutor, subject: course.course_subject, number: course.course_num, completion: {})
         NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: course, completion: {() in
             let banner = NotificationBanner(title: "User added!", style: .success)
             banner.show()})
+        (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
     }
 }
 

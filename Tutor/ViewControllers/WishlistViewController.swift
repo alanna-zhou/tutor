@@ -37,6 +37,8 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
                                     for course in courseList {
                                         self.courseNames.append("\(course.course_subject) \(course.course_num): \(course.course_name)")
                                     }
+                                    let rightFade = AnimationType.from(direction: .right, offset: 60.0)
+                                    self.tableView.animate(animations: [rightFade], duration: 0.5)
                                     DispatchQueue.main.async {self.tableView.reloadData()}},
                                      failure: { () in self.courses = []})
         searchController = UISearchController(searchResultsController: nil)

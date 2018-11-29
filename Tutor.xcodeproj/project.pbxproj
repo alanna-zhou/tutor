@@ -98,7 +98,6 @@
 				CAA2D7A121ADDD9000870A11 /* TableViewCells */,
 				CAA2D7A221ADDDBB00870A11 /* JSONData */,
 				CA7BF8A421A467250073F6E8 /* AppDelegate.swift */,
-				CA051CAA21AE123600B0A0E9 /* NetworkManager.swift */,
 				CAA73EB521AC923000721663 /* LoginBulletinPage.swift */,
 				CAEABFE721AD15D3004DE148 /* Assets.xcassets */,
 				CA7BF8AD21A467270073F6E8 /* LaunchScreen.storyboard */,
@@ -134,6 +133,7 @@
 		CAA2D7A221ADDDBB00870A11 /* JSONData */ = {
 			isa = PBXGroup;
 			children = (
+				CA051CAA21AE123600B0A0E9 /* NetworkManager.swift */,
 				CABDE2C921A60E6C00BB77CF /* Course.swift */,
 				CAC7842F21A532460058CDCF /* User.swift */,
 			);
