@@ -27,21 +27,24 @@ def insert_initial_values(*args, **kwargs):
     name='Alanna Zhou',
     year=2022,
     major='Computer Science',
-    bio='I like fried bananas.'
+    bio='I like fried bananas.',
+    url=''
   ))
   db.session.add(User(
     net_id='lae66',
     name='Luis Enriquez',
     year=2022,
     major='Mechanical Engineering',
-    bio='I like crude memes.'
+    bio='I like crude memes.',
+    url=''
   ))
   db.session.add(User(
     net_id='slh268',
     name='Sarah Huang',
     year=2022,
     major='Chemical Engineering',
-    bio='Yeetaki Mushroomz!'
+    bio='Yeetaki Mushroomz!',
+    url=''
   ))
   db.session.commit()
   subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
@@ -54,11 +57,6 @@ def insert_initial_values(*args, **kwargs):
       for c in courses:
           db.session.add(Course(course_subject=c.get('subject', ''), course_num=c.get('catalogNbr', ''), course_name=c.get('titleLong', '')))
   db.session.commit()
-
-@app.route('/api/test/<int:course_id>/', methods=['GET'])
-def test(course_id):
-  course = Course.query.filter_by(id=course_id).first() 
-  return json.dumps({'success': True, 'data': course.serialize()})
 
 @app.route('/api/user/', methods=['POST'])
 def create_user():
@@ -73,7 +71,8 @@ def create_user():
       name=post_body.get('name', ''), 
       year=post_body.get('year', ''), 
       major=post_body.get('major', ''), 
-      bio=post_body.get('bio', '')
+      bio=post_body.get('bio', ''),
+      url=post_body.get('url', '')
   )
   db.session.add(user)
   db.session.commit()
@@ -81,18 +80,18 @@ def create_user():
 
 @app.route('/api/user/<string:net_id>/', methods=['POST'])
 def edit_user(net_id):
-  print('ENTERING EDIT USER')
   user = User.query.filter_by(net_id=net_id).first()
   if user is None:
     return json.dumps({'success': False, 'error': 'User does not exist!'}), 404
   post_body = json.loads(request.data)
-  print("POST BODY", post_body)
   for value in post_body:
-    print("VALUE", value)
-    setattr(user, value, post_body.get(value))
+    try:
+      setattr(user, value, post_body.get(value))
+    except:
+      continue
   user = User.query.filter_by(net_id=net_id).first()
+  db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
-
 
 @app.route('/api/user/<string:net_id>/', methods=['GET'])
 def get_user(net_id):
@@ -128,7 +127,6 @@ def add_course_to_user():
   )
   db.session.add(user_to_course)
   db.session.commit()
-  print('QUERY ALL', [q.serialize() for q in UserToCourse.query.all()])
   result = {
     'net_id': user.net_id,
     'is_tutor': user_to_course.is_tutor,
@@ -294,6 +292,36 @@ def is_valid_tutee(tutee, course):
   is_tutee = UserToCourse.query.filter_by(user_id=tutee.id, course_id=course.id, is_tutor=False).first()
   match = Match.query.filter_by(tutee_id=tutee.id, course_id=course.id).first()
   return is_tutee is not None and match is None
+
+@app.route('/api/user/<string:net_id>/tutors/', methods=['GET'])
+def get_user_tutors(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'User does not exist!'}), 404
+  # get all matches where tutee id matches user id
+  matches = Match.query.filter_by(tutee_id=user.id)
+  if matches.first() is None:
+    return json.dumps({'success': False, 'error': 'User does not have any tutors!'}), 404
+  tutors = []
+  for m in matches:
+    tutor = User.query.filter_by(id=m.tutor_id).first()
+    tutors.append(tutor.net_id)
+  return json.dumps({'success': True, 'data': tutors}), 200
+
+@app.route('/api/user/<string:net_id>/tutees/', methods=['GET'])
+def get_user_tutees(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'User does not exist!'}), 404
+  # get all matches where tutee id matches user id
+  matches = Match.query.filter_by(tutor_id=user.id)
+  if matches.first() is None:
+    return json.dumps({'success': False, 'error': 'User does not have any tutees!'}), 404
+  tutees = []
+  for m in matches:
+    tutee = User.query.filter_by(id=m.tutee_id).first()
+    tutees.append(tutee.net_id)
+  return json.dumps({'success': True, 'data': tutees}), 200
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=True)
