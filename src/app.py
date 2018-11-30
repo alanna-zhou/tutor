@@ -27,24 +27,21 @@ def insert_initial_values(*args, **kwargs):
     name='Alanna Zhou',
     year=2022,
     major='Computer Science',
-    bio='I like fried bananas.',
-    url=''
+    bio='I like fried bananas.'
   ))
   db.session.add(User(
     net_id='lae66',
     name='Luis Enriquez',
     year=2022,
     major='Mechanical Engineering',
-    bio='I like crude memes.',
-    url=''
+    bio='I like crude memes.'
   ))
   db.session.add(User(
     net_id='slh268',
     name='Sarah Huang',
     year=2022,
     major='Chemical Engineering',
-    bio='Yeetaki Mushroomz!',
-    url=''
+    bio='Yeetaki Mushroomz!'
   ))
   db.session.commit()
   subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
@@ -72,7 +69,7 @@ def create_user():
       year=post_body.get('year', ''), 
       major=post_body.get('major', ''), 
       bio=post_body.get('bio', ''),
-      url=post_body.get('url', '')
+      url=post_body.get('url')
   )
   db.session.add(user)
   db.session.commit()
