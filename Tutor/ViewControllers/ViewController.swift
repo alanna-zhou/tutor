@@ -78,10 +78,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
-    @objc func presentUserSetupView() {
-        let modalView = ProfileSetupViewController()
-        present(modalView, animated: true, completion: nil)
-    }
+//    @objc func presentUserSetupView() {
+//        let modalView = ProfileSetupViewController()
+//        present(modalView, animated: true, completion: nil)
+//    }
     
     @objc func pushProfileView() {
         let navigationView = ProfileViewController()
@@ -156,9 +156,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let netID = email[email.startIndex..<index]
         UserDefaults.standard.set(netID, forKey: "netID")
         
-        NetworkManager.getUserInfo(netID: String(netID),
-            completion: { user in UserDefaults.standard.set(netID, forKey: "netID")},       // Success
-            failure: { () in self.presentUserSetupView()})     // Failure
+//        NetworkManager.getUserInfo(netID: String(netID),
+//            completion: { user in UserDefaults.standard.set(netID, forKey: "netID")},       // Success
+//            failure: { () in self.presentUserSetupView()})     // Failure
         
         NetworkManager.getTutorCourses(netID: String(netID),
                                        completion: { courses in
