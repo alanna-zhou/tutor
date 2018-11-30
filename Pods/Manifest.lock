@@ -1,7 +1,6 @@
 PODS:
   - Alamofire (4.7.3)
   - BulletinBoard (2.0.2)
-  - DropDown (2.3.12)
   - GoogleSignIn (4.3.0):
     - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
@@ -27,16 +26,17 @@ PODS:
   - NotificationBannerSwift (1.8.0):
     - MarqueeLabel/Swift (~> 3.2.0)
     - SnapKit (~> 4.0.1)
+  - SkeletonView (1.4.1)
   - SnapKit (4.0.1)
   - ViewAnimator (2.2.0)
 
 DEPENDENCIES:
   - Alamofire
   - BulletinBoard
-  - DropDown
   - GoogleSignIn
   - Hero
   - NotificationBannerSwift
+  - SkeletonView
   - SnapKit
   - ViewAnimator
 
@@ -44,7 +44,6 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - BulletinBoard
-    - DropDown
     - GoogleSignIn
     - GoogleToolboxForMac
     - GTMOAuth2
@@ -52,13 +51,13 @@ SPEC REPOS:
     - Hero
     - MarqueeLabel
     - NotificationBannerSwift
+    - SkeletonView
     - SnapKit
     - ViewAnimator
 
 SPEC CHECKSUMS:
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   BulletinBoard: a4a3022789e5202167127c3231975313c1d76c51
-  DropDown: 0bcc278799ec11a3d34ce1aac9367fbbaf5423d9
   GoogleSignIn: 11183592dc63e105475c7305a325045ff95e02b7
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
@@ -66,9 +65,10 @@ SPEC CHECKSUMS:
   Hero: bac92350d7201a1a940003e0767c7b52ce7c99a1
   MarqueeLabel: 440a502b91a9179bd98f9fff00ba1150650a1c0e
   NotificationBannerSwift: 49fc4be7fabada55b189b50e72184c92edd5f7f7
+  SkeletonView: 60d6ce7edb0cb4c7758db33c74add50392b3c475
   SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
   ViewAnimator: a849844cc3698620e1a562b510ed0c28aeafcdc5
 
-PODFILE CHECKSUM: 3b09627379945771b9c8b30d507b9b0b71fafe8f
+PODFILE CHECKSUM: 0bb8e4e928627f142b256f841630dc9f202e1c68
 
 COCOAPODS: 1.6.0.beta.2

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4E93DDECCEBB219EA174752E /* Pods_Tutor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BBD21342D92148EA06089A /* Pods_Tutor.framework */; };
+		CA051CAB21AE123600B0A0E9 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA051CAA21AE123600B0A0E9 /* NetworkManager.swift */; };
+		CA051CAF21AE73E700B0A0E9 /* SelectedUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA051CAE21AE73E700B0A0E9 /* SelectedUserViewController.swift */; };
 		CA19E03021A67252005BA9F4 /* CourseWishlistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */; };
 		CA19E03221A9F6C2005BA9F4 /* WishlistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */; };
 		CA5547D621AA269C004C1197 /* CourseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */; };
@@ -27,6 +29,8 @@
 
 /* Begin PBXFileReference section */
 		767960A9496A3C78BF204CB4 /* Pods-Tutor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tutor.debug.xcconfig"; path = "Target Support Files/Pods-Tutor/Pods-Tutor.debug.xcconfig"; sourceTree = "<group>"; };
+		CA051CAA21AE123600B0A0E9 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		CA051CAE21AE73E700B0A0E9 /* SelectedUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedUserViewController.swift; sourceTree = "<group>"; };
 		CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseWishlistTableViewCell.swift; sourceTree = "<group>"; };
 		CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistViewController.swift; sourceTree = "<group>"; };
 		CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseTableViewCell.swift; sourceTree = "<group>"; };
@@ -90,18 +94,11 @@
 		CA7BF8A321A467250073F6E8 /* Tutor */ = {
 			isa = PBXGroup;
 			children = (
+				CAA2D7A021ADDD7100870A11 /* ViewControllers */,
+				CAA2D7A121ADDD9000870A11 /* TableViewCells */,
+				CAA2D7A221ADDDBB00870A11 /* JSONData */,
 				CA7BF8A421A467250073F6E8 /* AppDelegate.swift */,
-				CA5547D921AA6619004C1197 /* ViewController.swift */,
-				CAEABFE921AD1916004DE148 /* ProfileViewController.swift */,
-				CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */,
-				CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */,
-				CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */,
-				CA5547DD21AA6B44004C1197 /* TutorTuteeTableViewCell.swift */,
-				CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */,
-				CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */,
 				CAA73EB521AC923000721663 /* LoginBulletinPage.swift */,
-				CABDE2C921A60E6C00BB77CF /* Course.swift */,
-				CAC7842F21A532460058CDCF /* User.swift */,
 				CAEABFE721AD15D3004DE148 /* Assets.xcassets */,
 				CA7BF8AD21A467270073F6E8 /* LaunchScreen.storyboard */,
 				CAA73EB321AC88F300721663 /* credentials.plist */,
@@ -109,6 +106,40 @@
 			);
 			path = Tutor;
 			sourceTree = "<group>";
+		};
+		CAA2D7A021ADDD7100870A11 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				CA5547D921AA6619004C1197 /* ViewController.swift */,
+				CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */,
+				CAEABFE921AD1916004DE148 /* ProfileViewController.swift */,
+				CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */,
+				CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */,
+				CA051CAE21AE73E700B0A0E9 /* SelectedUserViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		CAA2D7A121ADDD9000870A11 /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				CA5547DD21AA6B44004C1197 /* TutorTuteeTableViewCell.swift */,
+				CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */,
+				CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */,
+			);
+			path = TableViewCells;
+			sourceTree = "<group>";
+		};
+		CAA2D7A221ADDDBB00870A11 /* JSONData */ = {
+			isa = PBXGroup;
+			children = (
+				CA051CAA21AE123600B0A0E9 /* NetworkManager.swift */,
+				CABDE2C921A60E6C00BB77CF /* Course.swift */,
+				CAC7842F21A532460058CDCF /* User.swift */,
+			);
+			name = JSONData;
+			path = Tutor/JSONData;
+			sourceTree = SOURCE_ROOT;
 		};
 		DE447C9E02C8482DF88FA11C /* Frameworks */ = {
 			isa = PBXGroup;
@@ -199,13 +230,13 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Tutor/Pods-Tutor-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/BulletinBoard/BLTNBoard.framework",
-				"${BUILT_PRODUCTS_DIR}/DropDown/DropDown.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/ViewAnimator/ViewAnimator.framework",
 			);
@@ -215,13 +246,13 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BLTNBoard.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DropDown.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ViewAnimator.framework",
 			);
@@ -283,7 +314,9 @@
 			files = (
 				CA5547DE21AA6B44004C1197 /* TutorTuteeTableViewCell.swift in Sources */,
 				CA5547DA21AA6619004C1197 /* ViewController.swift in Sources */,
+				CA051CAF21AE73E700B0A0E9 /* SelectedUserViewController.swift in Sources */,
 				CA5547D821AA59C7004C1197 /* TutorTuteeCatalogViewController.swift in Sources */,
+				CA051CAB21AE123600B0A0E9 /* NetworkManager.swift in Sources */,
 				CA19E03021A67252005BA9F4 /* CourseWishlistTableViewCell.swift in Sources */,
 				CAC7843021A532460058CDCF /* User.swift in Sources */,
 				CABDE2CA21A60E6C00BB77CF /* Course.swift in Sources */,

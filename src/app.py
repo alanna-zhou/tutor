@@ -17,7 +17,7 @@ db.init_app(app)
 with app.app_context():
   db.create_all()
 
-# @app.before_first_request
+@app.before_first_request
 def insert_initial_values(*args, **kwargs):
   # db.session.add(Course(course_subject='CS', course_num=2112, course_name='Object-Oriented Programming and Data Structures'))
   # db.session.add(Course(course_subject='CHEM', course_num=2090, course_name='General Chemistry'))
