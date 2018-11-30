@@ -18,8 +18,8 @@ enum Role {
 
 class RoleSelectionViewController: UIViewController {
 
-    var tutorButton: TutorButton!
-    var tuteeButton: TuteeButton!
+    var tutorButton: TutorShape!
+    var tuteeButton: TuteeShape!
     var tutorLabel: UILabel!
     var tuteeLabel: UILabel!
     var bothButton: UIButton!
@@ -33,12 +33,12 @@ class RoleSelectionViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        tutorButton = TutorButton(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY)
-        tutorButton.addTarget(self, action: #selector(tutor), for: .touchUpInside)
+        tutorButton = TutorShape(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY)
+        tutorButton.isUserInteractionEnabled = false
         view.addSubview(tutorButton)
         
-        tuteeButton = TuteeButton(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY)
-        tuteeButton.addTarget(self, action: #selector(tutee), for: .touchUpInside)
+        tuteeButton = TuteeShape(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY)
+        tuteeButton.isUserInteractionEnabled = false
         view.addSubview(tuteeButton)
         
         bothButton = UIButton()
@@ -72,11 +72,11 @@ class RoleSelectionViewController: UIViewController {
     @objc func both() {
         presentProfileSetup(color: bothColor, role: .both, id: "both")
     }
-    @objc func tutor() {
+    func tutor() {
         presentProfileSetup(color: tutorColor, role: .tutor, id: "tutor")
         print("tutor")
     }
-    @objc func tutee() {
+    func tutee() {
         presentProfileSetup(color: tuteeColor, role: .tutee, id: "tutee")
         print("tutee")
     }
@@ -109,9 +109,22 @@ class RoleSelectionViewController: UIViewController {
         present(profileSetupView, animated: true, completion: nil)
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touchPoint = touches.first?.location(in: self.view) else {
+            return
+        }
+        print("checking buttons")
+        if tutorButton.path.contains(touchPoint) {
+            tutor()
+        }
+        else if tuteeButton.path.contains(touchPoint) {
+            tutee()
+        }
+    }
+    
 }
 
-class TutorButton: UIButton {
+class TutorShape: UIView {
     
     var path: UIBezierPath!
     var minX: CGFloat!
@@ -143,26 +156,10 @@ class TutorButton: UIButton {
         shapeLayer.fillColor = UIColor(red: 0.298, green: 0.737, blue: 0.871, alpha: 1).cgColor
         shapeLayer.path = path.cgPath
         layer.addSublayer(shapeLayer)
-//        addTarget(self, action: #selector(touchDown), for: .touchDown)
-    }
-    
-    @objc func touchDown(button: TutorButton, event: UIEvent) {
-        print("blue touched")
-        if let touch = event.touches(for: button)?.first {
-            let location = touch.location(in: button)
-
-            if path.contains(location) == false {
-                button.cancelTracking(with: nil)
-                print("blue cancelled")
-            }
-            else {
-                print("blue proceed")
-            }
-        }
     }
 }
 
-class TuteeButton: UIButton {
+class TuteeShape: UIView {
     
     var path: UIBezierPath!
     var minX: CGFloat!
@@ -194,21 +191,5 @@ class TuteeButton: UIButton {
         shapeLayer.fillColor = UIColor(red: 0.937, green: 0.486, blue: 0.714, alpha: 1).cgColor
         shapeLayer.path = path.cgPath
         layer.addSublayer(shapeLayer)
-//        addTarget(self, action: #selector(touchDown), for: .touchDown)
-    }
-    
-    @objc func touchDown(button: TuteeButton, event: UIEvent) {
-        print("pink touched")
-        if let touch = event.touches(for: button)?.first {
-            let location = touch.location(in: button)
-
-            if path.contains(location) == false {
-                button.cancelTracking(with: nil)
-                print("pink cancelled")
-            }
-            else {
-                print("pink proceed")
-            }
-        }
     }
 }
