@@ -18,7 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         GIDSignIn.sharedInstance().clientID = "110222641219-49s9oettgqsvbrbvn0dses9k681ctl7v.apps.googleusercontent.com"
         GIDSignIn.sharedInstance().delegate = self
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController(rootViewController: ViewController())
+        window?.rootViewController = RoleSelectionViewController()
+//        window?.rootViewController = UINavigationController(rootViewController: ViewController())
         window?.makeKeyAndVisible()
         return true
     }

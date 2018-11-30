@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import Alamofire
 import NotificationBannerSwift
+import Hero
 
 class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
 
@@ -20,10 +21,25 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
     var bioLabel: UILabel!
     var bio: UITextView!
     var submitButton: UIButton!
+    var role: Role!
+    var color: UIColor!
+    var id: String!
+    
+    init(color: UIColor!, role: Role, id: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.color = color
+        self.role = role
+        self.id = id
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = color
+        view.hero.id = id
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
         self.view.addGestureRecognizer(tapGesture)
@@ -56,17 +72,35 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(bioLabel)
         
         bio = UITextView()
+        bio.backgroundColor = color
         bio.isEditable = true
         bio.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         view.addSubview(bio)
         
         submitButton = UIButton()
         submitButton.setTitle("Submit", for: .normal)
-        submitButton.setTitleColor(.black, for: .normal)
         submitButton.titleLabel?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
         submitButton.addTarget(self, action: #selector(validateProfile), for: .touchUpInside)
         view.addSubview(submitButton)
         
+        switch(color) {
+        case UIColor.white:
+            yearLabel.textColor = .black
+            yearTextField.textColor = .black
+            majorLabel.textColor = .black
+            majorTextField.textColor = .black
+            bioLabel.textColor = .black
+            bio.textColor = .black
+            submitButton.setTitleColor(.black, for: .normal)
+        default:
+            yearLabel.textColor = .white
+            yearTextField.textColor = .white
+            majorLabel.textColor = .white
+            majorTextField.textColor = .white
+            bioLabel.textColor = .white
+            bio.textColor = .white
+            submitButton.setTitleColor(.white, for: .normal)
+        }
         setUpConstraints()
     }
     
@@ -74,28 +108,33 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         yearLabel.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
         }
         yearTextField.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(yearLabel.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
         }
         majorLabel.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(yearTextField.snp.bottom).offset(30)
             make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
         }
         majorTextField.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(majorLabel.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
         }
         bioLabel.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(majorTextField.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
         }
         bio.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(bioLabel.snp.bottom).offset(20)
             make.height.equalTo(100)
             make.leading.equalTo(view).offset(20)
-            make.trailing.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
             make.leading.equalTo(view).offset(20)
         }
         submitButton.snp.makeConstraints { (make) -> Void in

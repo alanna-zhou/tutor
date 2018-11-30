@@ -12,6 +12,8 @@
 		CA051CAF21AE73E700B0A0E9 /* SelectedUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA051CAE21AE73E700B0A0E9 /* SelectedUserViewController.swift */; };
 		CA19E03021A67252005BA9F4 /* CourseWishlistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */; };
 		CA19E03221A9F6C2005BA9F4 /* WishlistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */; };
+		CA27358821B0A08C00D72DC8 /* RoleSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA27358721B0A08C00D72DC8 /* RoleSelectionViewController.swift */; };
+		CA27358A21B0C86800D72DC8 /* PromptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA27358921B0C86800D72DC8 /* PromptViewController.swift */; };
 		CA5547D621AA269C004C1197 /* CourseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */; };
 		CA5547D821AA59C7004C1197 /* TutorTuteeCatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */; };
 		CA5547DA21AA6619004C1197 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D921AA6619004C1197 /* ViewController.swift */; };
@@ -33,6 +35,8 @@
 		CA051CAE21AE73E700B0A0E9 /* SelectedUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedUserViewController.swift; sourceTree = "<group>"; };
 		CA19E02F21A67252005BA9F4 /* CourseWishlistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseWishlistTableViewCell.swift; sourceTree = "<group>"; };
 		CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistViewController.swift; sourceTree = "<group>"; };
+		CA27358721B0A08C00D72DC8 /* RoleSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleSelectionViewController.swift; sourceTree = "<group>"; };
+		CA27358921B0C86800D72DC8 /* PromptViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptViewController.swift; sourceTree = "<group>"; };
 		CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseTableViewCell.swift; sourceTree = "<group>"; };
 		CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorTuteeCatalogViewController.swift; sourceTree = "<group>"; };
 		CA5547D921AA6619004C1197 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -94,10 +98,10 @@
 		CA7BF8A321A467250073F6E8 /* Tutor */ = {
 			isa = PBXGroup;
 			children = (
+				CA7BF8A421A467250073F6E8 /* AppDelegate.swift */,
 				CAA2D7A021ADDD7100870A11 /* ViewControllers */,
 				CAA2D7A121ADDD9000870A11 /* TableViewCells */,
 				CAA2D7A221ADDDBB00870A11 /* JSONData */,
-				CA7BF8A421A467250073F6E8 /* AppDelegate.swift */,
 				CAA73EB521AC923000721663 /* LoginBulletinPage.swift */,
 				CAEABFE721AD15D3004DE148 /* Assets.xcassets */,
 				CA7BF8AD21A467270073F6E8 /* LaunchScreen.storyboard */,
@@ -111,6 +115,8 @@
 			isa = PBXGroup;
 			children = (
 				CA5547D921AA6619004C1197 /* ViewController.swift */,
+				CA27358921B0C86800D72DC8 /* PromptViewController.swift */,
+				CA27358721B0A08C00D72DC8 /* RoleSelectionViewController.swift */,
 				CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */,
 				CAEABFE921AD1916004DE148 /* ProfileViewController.swift */,
 				CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */,
@@ -318,6 +324,7 @@
 				CA5547D821AA59C7004C1197 /* TutorTuteeCatalogViewController.swift in Sources */,
 				CA051CAB21AE123600B0A0E9 /* NetworkManager.swift in Sources */,
 				CA19E03021A67252005BA9F4 /* CourseWishlistTableViewCell.swift in Sources */,
+				CA27358A21B0C86800D72DC8 /* PromptViewController.swift in Sources */,
 				CAC7843021A532460058CDCF /* User.swift in Sources */,
 				CABDE2CA21A60E6C00BB77CF /* Course.swift in Sources */,
 				CAEABFEA21AD1916004DE148 /* ProfileViewController.swift in Sources */,
@@ -326,6 +333,7 @@
 				CA19E03221A9F6C2005BA9F4 /* WishlistViewController.swift in Sources */,
 				CAC7842B21A4A3E60058CDCF /* ProfileSetupViewController.swift in Sources */,
 				CA7BF8A521A467250073F6E8 /* AppDelegate.swift in Sources */,
+				CA27358821B0A08C00D72DC8 /* RoleSelectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
