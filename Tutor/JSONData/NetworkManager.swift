@@ -201,7 +201,6 @@ class NetworkManager {
                                       "tutee_net_id": tuteeID,
                                       "course_subject": course.course_subject,
                                       "course_num": course.course_num]
-        print(parameters)
         Alamofire.request(matchUsersURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
             switch response.result {
             case let .success(data):

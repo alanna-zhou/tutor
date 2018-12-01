@@ -37,8 +37,8 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
         
         tutorTuteeSegment = UISegmentedControl()
         tutorTuteeSegment.translatesAutoresizingMaskIntoConstraints = false
-        tutorTuteeSegment.insertSegment(withTitle: "Tutor", at: 0, animated: true)
-        tutorTuteeSegment.insertSegment(withTitle: "Tutee", at: 1, animated: true)
+        tutorTuteeSegment.insertSegment(withTitle: "Tutors", at: 0, animated: true)
+        tutorTuteeSegment.insertSegment(withTitle: "Tutees", at: 1, animated: true)
         tutorTuteeSegment.selectedSegmentIndex = 0
         tutorTuteeSegment.addTarget(self, action: #selector(swapRole), for: .valueChanged)
         

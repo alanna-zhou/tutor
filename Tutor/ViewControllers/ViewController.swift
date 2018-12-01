@@ -40,8 +40,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         tutorTuteeSegment = UISegmentedControl()
         tutorTuteeSegment.translatesAutoresizingMaskIntoConstraints = false
-        tutorTuteeSegment.insertSegment(withTitle: "Tutor", at: 0, animated: true)
-        tutorTuteeSegment.insertSegment(withTitle: "Tutee", at: 1, animated: true)
+        tutorTuteeSegment.insertSegment(withTitle: "Tutors", at: 0, animated: true)
+        tutorTuteeSegment.insertSegment(withTitle: "Tutees", at: 1, animated: true)
         tutorTuteeSegment.selectedSegmentIndex = 0
         tutorTuteeSegment.addTarget(self, action: #selector(swapRole), for: .valueChanged)
 
@@ -78,11 +78,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
-//    @objc func presentUserSetupView() {
-//        let modalView = ProfileSetupViewController()
-//        present(modalView, animated: true, completion: nil)
-//    }
-    
     @objc func pushProfileView() {
         let navigationView = ProfileViewController()
         navigationView.delegate = self
@@ -92,6 +87,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @objc func pushWishlistView() {
         let navigationView = WishlistViewController()
         navigationController?.pushViewController(navigationView, animated: true)
+    }
+    
+    @objc func presentUserSetup() {
+        let modalView = PromptViewController()
+        present(modalView, animated: true, completion: nil)
+    }
+    
+    func presentUserSetup(completion: () -> Void) {
+        let modalView = PromptViewController()
+        present(modalView, animated: true, completion: {() in
+            print("dismissing")
+            self.bulletinManager?.dismissBulletin(animated: true)})
+    }
+    
+    @objc func presentProfileSetupView() {
+        let modalView = ProfileSetupViewController()
+        present(modalView, animated: true, completion: {() in self.bulletinManager?.dismissBulletin(animated: true)})
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -122,12 +134,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func checkUsername() {
         let userID = UserDefaults.standard.string(forKey: "userID")
         if userID != nil {
-            bulletinManager?.dismissBulletin(animated: true)
+            login()
+//            bulletinManager?.dismissBulletin(animated: true)
             let banner = NotificationBanner(title: "Logged in!", style: .success)
             banner.show()
             AudioServicesPlaySystemSound(1519)      // Vibrates
-            
-            login()
             return
         }
         // Allow users to login
@@ -156,9 +167,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let netID = email[email.startIndex..<index]
         UserDefaults.standard.set(netID, forKey: "netID")
         
-//        NetworkManager.getUserInfo(netID: String(netID),
-//            completion: { user in UserDefaults.standard.set(netID, forKey: "netID")},       // Success
-//            failure: { () in self.presentUserSetupView()})     // Failure
+        NetworkManager.getUserInfo(netID: String(netID),
+            completion: { user in UserDefaults.standard.set(netID, forKey: "netID")
+                if user.bio == "" || user.major == "" || user.name == "" {
+                    self.presentProfileSetupView()
+                }
+                else {
+                    self.bulletinManager?.dismissBulletin(animated: true)
+                }
+        },  failure: { () in self.presentUserSetup()})     // Failure
         
         NetworkManager.getTutorCourses(netID: String(netID),
                                        completion: { courses in
