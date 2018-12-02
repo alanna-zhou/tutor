@@ -131,9 +131,13 @@ class SelectedUserViewController: UIViewController {
             tuteeID = self.netID
         }
         NetworkManager.addCourseToUser(netID: self.netID, isTutor: isTutor, subject: course.course_subject, number: course.course_num, completion: {}, failure: {error in})
-        NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: course, completion: {() in
-            let banner = NotificationBanner(title: "User added!", style: .success)
-            banner.show()})
+        NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: course,
+                                  completion: {() in
+                                    let banner = NotificationBanner(title: "User added!", style: .success)
+                                    banner.show()},
+                                  failure: { error in
+                                    let banner = NotificationBanner(title: "You can't add this user.", style: .danger)
+                                    banner.show()})
         (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
     }
 }

@@ -339,7 +339,7 @@ class NetworkManager {
         }
     }
     
-    static func matchUsers(tutorID: String, tuteeID: String, course: Course, completion: @escaping() -> Void) {
+    static func matchUsers(tutorID: String, tuteeID: String, course: Course, completion: @escaping() -> Void, failure: @escaping (String) -> Void) {
         let matchUsersURL = "http://35.190.144.148/api/match"
         let parameters: Parameters = ["tutor_net_id": tutorID,
                                       "tutee_net_id": tuteeID,
@@ -364,6 +364,7 @@ class NetworkManager {
                 }
                 else {
                     print(error.localizedDescription)
+                    failure(error)
                 }
             }
         }
