@@ -27,21 +27,24 @@ def insert_initial_values(*args, **kwargs):
     name='Alanna Zhou',
     year=2022,
     major='Computer Science',
-    bio='I like fried bananas.'
+    bio='I like fried bananas.',
+    color=''
   ))
   db.session.add(User(
     net_id='lae66',
     name='Luis Enriquez',
     year=2022,
     major='Mechanical Engineering',
-    bio='I like crude memes.'
+    bio='I like crude memes.',
+    color=''
   ))
   db.session.add(User(
     net_id='slh268',
     name='Sarah Huang',
     year=2022,
     major='Chemical Engineering',
-    bio='Yeetaki Mushroomz!'
+    bio='Yeetaki Mushroomz!',
+    color=''
   ))
   db.session.commit()
   subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
@@ -69,7 +72,8 @@ def create_user():
       year=post_body.get('year', ''), 
       major=post_body.get('major', ''), 
       bio=post_body.get('bio', ''),
-      url=post_body.get('url')
+      url=post_body.get('url'),
+      color=post_body.get('color', '')
   )
   db.session.add(user)
   db.session.commit()
@@ -89,6 +93,29 @@ def edit_user(net_id):
   user = User.query.filter_by(net_id=net_id).first()
   db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
+
+@app.route('/api/user/<string:net_id>/', methods=['DELETE'])
+def delete_user(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'User does not exist!'}), 404
+  db.session.delete(user)
+  db.session.commit()
+  return json.dumps({'success': True, 'data': user.serialize()}), 200
+
+@app.route('/api/users/', methods=['DELETE'])
+def delete_all_users():
+  db.session.query(User).delete()
+  db.session.commit()
+  return json.dumps({'success': True}), 200
+
+@app.route('/api/users/', methods=['GET'])
+def get_all_users():
+  query = User.query.all()
+  users = []
+  for u in query:
+    users.append(u.serialize())
+  return json.dumps({'success': True, 'data': users}), 200
 
 @app.route('/api/user/<string:net_id>/', methods=['GET'])
 def get_user(net_id):
@@ -270,6 +297,62 @@ def match_users():
     course_id=course.id
   )
   db.session.add(match)
+  db.session.commit()
+  result = {
+    'tutor_net_id': tutor.net_id,
+    'tutee_net_id': tutee.net_id,
+    'course_subject': course.course_subject,
+    'course_num': course.course_num,
+    'course_name': course.course_name
+  }
+  return json.dumps({'success': True, 'data': result}), 200
+
+@app.route('/api/matches/', methods=['GET'])
+def get_matches():
+  query = Match.query.all()
+  matches = []
+  for m in query:
+    tutor = User.query.filter_by(id=m.tutor_id).first()
+    if tutor is None: 
+      continue
+    tutee = User.query.filter_by(id=m.tutee_id).first()
+    if tutee is None:
+      continue
+    course = Course.query.filter_by(id=m.course_id).first()
+    if course is None:
+      continue
+    result = {
+      'tutor_net_id': tutor.net_id,
+      'tutee_net_id': tutee.net_id,
+      'course_subject': course.course_subject,
+      'course_num': course.course_num,
+      'course_name': course.course_name
+    }
+    matches.append(result)
+  return json.dumps({'success': True, 'data': matches}), 200
+
+@app.route('/api/match/delete/', methods=['POST'])
+def delete_match():
+  post_body = json.loads(request.data)
+  keys = ['tutor_net_id', 'tutee_net_id', 'course_subject', 'course_num']
+  for k in keys:
+    if k not in post_body:
+      return json.dumps({'success': False, 'error': 
+          'Missing necessary parameter to match a tutor and tutee!'}), 404
+  course = Course.query.filter_by(course_subject=post_body.get('course_subject'), 
+      course_num=post_body.get('course_num')).first()
+  if course is None:
+    return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
+  tutor = User.query.filter_by(net_id=post_body.get('tutor_net_id')).first()
+  if is_valid_tutor(tutor, course):
+    return json.dumps({'success': False, 'error': 'User is a valid or available tutor!'}), 404
+  tutee = User.query.filter_by(net_id=post_body.get('tutee_net_id')).first()
+  if is_valid_tutee(tutee, course):
+    return json.dumps({'success': False, 'error': 'User is a valid or available tutee!'}), 404
+  match = Match.query.filter_by(tutor_id=tutor.id, tutee_id=tutee.id, course_id=course.id).first()
+  if match is None:
+    return json.dumps({'success': False, 'error': 'No match to delete; match does not exist!'}), 404
+  db.session.delete(match)
   db.session.commit()
   result = {
     'tutor_net_id': tutor.net_id,

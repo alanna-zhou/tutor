@@ -11,6 +11,7 @@ class User(db.Model):
     major = db.Column(db.String, nullable=False)
     bio = db.Column(db.String, nullable=False)
     url = db.Column(db.String, nullable=False, default='https://www.poweron-it.com/images/easyblog_shared/July_2018/7-4-18/totw_network_profile_400.jpg')
+    color = db.Column(db.String, nullable=False)
     user_to_course = db.relationship('UserToCourse', cascade='delete')
 
     def __init__(self, **kwargs):
@@ -20,6 +21,7 @@ class User(db.Model):
       self.major = kwargs.get('major')
       self.bio = kwargs.get('bio')
       self.url = kwargs.get('url')
+      self.color = kwargs.get('color')
 
     def serialize(self):
       return {
@@ -29,6 +31,7 @@ class User(db.Model):
           'major': self.major,
           'bio': self.bio,
           'url': self.url,
+          'color': self.color,
       }
 
 class Course(db.Model):
@@ -78,11 +81,6 @@ class Match(db.Model):
     tutor = db.relationship("User", foreign_keys=[tutor_id])
     tutee = db.relationship("User", foreign_keys=[tutee_id])
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-
-    # company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
-    # stakeholder_id = Column(Integer, ForeignKey('company.id'), nullable=False)
-    # company = relationship("Company", foreign_keys=[company_id])
-    # stakeholder = relationship("Company", foreign_keys=[stakeholder_id])
  
     def __init__(self, **kwargs):
       self.tutor_id = kwargs.get('tutor_id')
