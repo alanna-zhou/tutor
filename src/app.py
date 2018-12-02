@@ -28,15 +28,19 @@ def insert_initial_values(*args, **kwargs):
     year=2022,
     major='Computer Science',
     bio='I like fried bananas.',
-    color=''
+    pic_name='',
+    warm_color='',
+    cool_color=''
   ))
   db.session.add(User(
-    net_id='lae66',
-    name='Luis Enriquez',
+    net_id='ad665',
+    name='Ashneel Das',
     year=2022,
-    major='Mechanical Engineering',
-    bio='I like crude memes.',
-    color=''
+    major='Computer Science',
+    bio='I love my girlfriend, Katie so much that I could give her fried bananas.',
+    pic_name='',
+    warm_color='',
+    cool_color=''
   ))
   db.session.add(User(
     net_id='slh268',
@@ -44,7 +48,9 @@ def insert_initial_values(*args, **kwargs):
     year=2022,
     major='Chemical Engineering',
     bio='Yeetaki Mushroomz!',
-    color=''
+    pic_name='',
+    warm_color='',
+    cool_color=''
   ))
   db.session.commit()
   subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
@@ -72,8 +78,9 @@ def create_user():
       year=post_body.get('year', ''), 
       major=post_body.get('major', ''), 
       bio=post_body.get('bio', ''),
-      url=post_body.get('url'),
-      color=post_body.get('color', '')
+      pic_name=post_body.get('pic_name', ''),
+      warm_color=post_body.get('warm_color', ''),
+      cool_color=post_body.get('cool_color', '')
   )
   db.session.add(user)
   db.session.commit()
