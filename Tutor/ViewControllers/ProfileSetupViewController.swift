@@ -55,6 +55,7 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(yearLabel)
         
         yearTextField = UITextField()
+        yearTextField.textAlignment = .left
         yearTextField.placeholder = "Graduation year"
         yearTextField.delegate = self
         yearTextField.tag = 0
@@ -66,6 +67,7 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(majorLabel)
         
         majorTextField = UITextField()
+        majorTextField.textAlignment = .left
         majorTextField.placeholder = "Enter your major"
         majorTextField.delegate = self
         majorTextField.tag = 1
@@ -117,27 +119,26 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         yearLabel.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.equalTo(view).offset(20)
-            make.trailing.equalTo(view).offset(-20)
+            make.width.equalTo(80)
         }
         yearTextField.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(yearLabel.snp.bottom).offset(20)
-            make.leading.equalTo(view).offset(20)
+            make.centerY.equalTo(yearLabel)
+            make.leading.equalTo(yearLabel.snp.trailing)
             make.trailing.equalTo(view).offset(-20)
         }
         majorLabel.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(yearTextField.snp.bottom).offset(30)
             make.leading.equalTo(view).offset(20)
-            make.trailing.equalTo(view).offset(-20)
+            make.width.equalTo(80)
         }
         majorTextField.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(majorLabel.snp.bottom).offset(20)
-            make.leading.equalTo(view).offset(20)
+            make.centerY.equalTo(majorLabel)
+            make.leading.equalTo(majorLabel.snp.trailing)
             make.trailing.equalTo(view).offset(-20)
         }
         bioLabel.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(majorTextField.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
-            make.trailing.equalTo(view).offset(-20)
         }
         bio.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(bioLabel.snp.bottom).offset(20)
@@ -181,13 +182,13 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
                                         completion: {() in
                                         let banner = NotificationBanner(title: "Profile updated!", style: .success)
                                         banner.show()
-                                        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)})},
+                                        UIApplication.shared.keyWindow?.rootViewController?.dismiss(animated: true, completion: nil)})},
                                    failure: { () in             // If user doesn't exist and a new profile is being created
                                     NetworkManager.addUser(netID: netID, name: name, year: year, major: major, bio: bio,
                                         completion: { () in
                                         let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
                                         banner.show()
-                                        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+                                        UIApplication.shared.keyWindow?.rootViewController?.dismiss(animated: true, completion: nil)
                                         })})
     }
     

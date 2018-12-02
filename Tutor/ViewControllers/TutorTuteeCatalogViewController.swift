@@ -99,7 +99,8 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 self.bulletinManager.dismissBulletin(animated: true)
                 let netID = UserDefaults.standard.string(forKey: "netID")!
                 NetworkManager.addCourseToUser(netID: netID, isTutor: false, subject: self.course.course_subject, number: self.course.course_num,
-                                               completion: {let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
+                                               completion: {
+                                                let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
                                                 banner.show()
                                                 self.tutees.append(netID)
                                                 self.tableView.reloadData()},
@@ -117,7 +118,8 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 self.bulletinManager.dismissBulletin(animated: true)
                 let netID = UserDefaults.standard.string(forKey: "netID")!
                 NetworkManager.addCourseToUser(netID: netID, isTutor: true, subject: self.course.course_subject, number: self.course.course_num,
-                                               completion: {let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
+                                               completion: {
+                                                let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
                                                 banner.show()
                                                 self.tutors.append(netID)
                                                 self.tableView.reloadData()},
@@ -136,7 +138,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
             let rootItem: BLTNItem = page
             return BLTNItemManager(rootItem: rootItem)
         }()
-        bulletinManager.backgroundViewStyle = .blurredDark
+        bulletinManager.backgroundViewStyle = .blurredLight
         bulletinManager.showBulletin(above: self)
     }
     
@@ -153,7 +155,8 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 self.bulletinManager.dismissBulletin(animated: true)
                 let netID = UserDefaults.standard.string(forKey: "netID")!
                 NetworkManager.addCourseToUser(netID: netID, isTutor: true, subject: self.course.course_subject, number: self.course.course_num,
-                                               completion: {let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
+                                               completion: {
+                                                let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
                                                 banner.show()
                                                 self.tutors.append(netID)
                                                 self.tableView.reloadData()},
@@ -171,7 +174,8 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 self.bulletinManager.dismissBulletin(animated: true)
                 let netID = UserDefaults.standard.string(forKey: "netID")!
                 NetworkManager.addCourseToUser(netID: netID, isTutor: false, subject: self.course.course_subject, number: self.course.course_num,
-                                               completion: {let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
+                                               completion: {
+                                                let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
                                                 self.tutees.append(netID)
                                                 banner.show()},
                                                failure: {error in
@@ -189,7 +193,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
             let rootItem: BLTNItem = page
             return BLTNItemManager(rootItem: rootItem)
         }()
-        bulletinManager.backgroundViewStyle = .blurredDark
+        bulletinManager.backgroundViewStyle = .blurredLight
         bulletinManager.showBulletin(above: self)
     }
     

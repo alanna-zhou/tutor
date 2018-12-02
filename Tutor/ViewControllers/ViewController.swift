@@ -82,13 +82,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         tableView.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(coursesLabel.snp.bottom).offset(20)
-            make.leading.trailing.equalTo(view)
+            make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).offset(-20)
             make.bottom.equalTo(view)
         }
     }
     
     @objc func swapRole() {
         tableView.reloadData()
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
+            coursesLabel.text = "Your Courses"
+        }
+        else if tutorTuteeSegment.selectedSegmentIndex == 1 {
+            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+            coursesLabel.text = "Your Tutors"
+        }
+        else {
+            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+            coursesLabel.text = "Your Tutees"
+        }
     }
     
     // Presenting views
@@ -103,20 +116,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         navigationController?.pushViewController(navigationView, animated: true)
     }
     
-    @objc func presentUserSetup() {
-        let modalView = PromptViewController()
-        present(modalView, animated: true, completion: nil)
-    }
-    
-    func presentUserSetup(completion: () -> Void) {
-        let modalView = PromptViewController()
-        present(modalView, animated: true, completion: {() in
-            self.bulletinManager?.dismissBulletin(animated: true)})
-    }
-    
-    @objc func presentProfileSetupView() {
-        let modalView = ProfileSetupViewController()
-        self.bulletinManager?.dismissBulletin(animated: true)
+    @objc func presentIntroViewController() {
+        let modalView = IntroViewController()
         present(modalView, animated: true, completion: nil)
     }
     
@@ -128,10 +129,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func checkUsername() {
         let userID = UserDefaults.standard.string(forKey: "userID")
         if userID != nil {
-            bulletinManager?.dismissBulletin(animated: true)
+            login()
             let banner = NotificationBanner(title: "Logged in!", style: .success)
             banner.show()
-            login()
             AudioServicesPlaySystemSound(1519)      // Vibrates
             return
         }
@@ -163,13 +163,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         NetworkManager.getUserInfo(netID: String(netID),
             completion: { user in
-                if user.bio == "" || user.major == "" || user.name == "" {
-                    self.presentProfileSetupView()
-                }
-                else {
-                    self.bulletinManager?.dismissBulletin(animated: true)
-                }
-        },  failure: { () in self.presentUserSetup()})     // Failure
+                self.bulletinManager?.dismissBulletin(animated: true)
+        },  failure: { () in
+            self.bulletinManager?.dismissBulletin(animated: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.presentIntroViewController()}     // Failure
+            })
         
         getCoursesAndUsers()
     }
@@ -258,6 +257,10 @@ extension ViewController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            let tutorTuteeViewController = TutorTuteeCatalogViewController(course: allCourses[indexPath.row])
+            navigationController?.pushViewController(tutorTuteeViewController, animated: true)
+        }
         if tutorTuteeSegment.selectedSegmentIndex == 1 {
             let userAtIndex = tutors[indexPath.section]
             let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)
