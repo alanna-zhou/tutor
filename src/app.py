@@ -100,6 +100,20 @@ def delete_user(net_id):
   db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
 
+@app.route('/api/users/', methods=['DELETE'])
+def delete_all_users():
+  db.session.query(User).delete()
+  db.session.commit()
+  return json.dumps({'success': True}), 200
+
+@app.route('/api/users/', methods=['GET'])
+def get_all_users():
+  query = User.query.all()
+  users = []
+  for u in query:
+    users.append(u.serialize())
+  return json.dumps({'success': True, 'data': users}), 200
+
 @app.route('/api/user/<string:net_id>/', methods=['GET'])
 def get_user(net_id):
   user = User.query.filter_by(net_id=net_id).first()
