@@ -74,11 +74,9 @@ class RoleSelectionViewController: UIViewController {
     }
     func tutor() {
         presentProfileSetup(color: tutorColor, role: .tutor, id: "tutor")
-        print("tutor")
     }
     func tutee() {
         presentProfileSetup(color: tuteeColor, role: .tutee, id: "tutee")
-        print("tutee")
     }
     
     func setUpConstraints() {
@@ -113,7 +111,6 @@ class RoleSelectionViewController: UIViewController {
         guard let touchPoint = touches.first?.location(in: self.view) else {
             return
         }
-        print("checking buttons")
         if tutorButton.path.contains(touchPoint) {
             tutor()
         }

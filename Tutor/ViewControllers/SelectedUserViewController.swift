@@ -29,6 +29,12 @@ class SelectedUserViewController: UIViewController {
         self.course = course
     }
     
+    init(netID: String, isTutor: Bool) {
+        super.init(nibName: nil, bundle: nil)
+        self.netID = netID
+        self.isTutor = isTutor
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -100,9 +106,11 @@ class SelectedUserViewController: UIViewController {
             make.leading.equalTo(view).offset(20)
             make.trailing.equalTo(view).offset(-20)
         }
-        addButton.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(bioTitleLabel.snp.bottom).offset(40)
-            make.leading.equalTo(view).offset(20)
+        if (course != nil) {
+            addButton.snp.makeConstraints{ (make) -> Void in
+                make.top.equalTo(bioTitleLabel.snp.bottom).offset(40)
+                make.leading.equalTo(view).offset(20)
+            }
         }
     }
     
@@ -122,7 +130,7 @@ class SelectedUserViewController: UIViewController {
             tutorID = userNetID
             tuteeID = self.netID
         }
-        NetworkManager.addCourseToUser(netID: self.netID, isTutor: isTutor, subject: course.course_subject, number: course.course_num, completion: {})
+        NetworkManager.addCourseToUser(netID: self.netID, isTutor: isTutor, subject: course.course_subject, number: course.course_num, completion: {}, failure: {error in})
         NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: course, completion: {() in
             let banner = NotificationBanner(title: "User added!", style: .success)
             banner.show()})

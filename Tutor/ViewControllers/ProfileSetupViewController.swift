@@ -32,6 +32,11 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         self.id = id
     }
     
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        self.color = .white
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -95,8 +100,12 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         default:
             yearLabel.textColor = .white
             yearTextField.textColor = .white
+            yearTextField.attributedPlaceholder = NSAttributedString(string: "Graduation year",
+                                                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
             majorLabel.textColor = .white
             majorTextField.textColor = .white
+            majorTextField.attributedPlaceholder = NSAttributedString(string: "Enter your major",
+                                                                       attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
             bioLabel.textColor = .white
             bio.textColor = .white
             submitButton.setTitleColor(.white, for: .normal)
@@ -133,9 +142,8 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         bio.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(bioLabel.snp.bottom).offset(20)
             make.height.equalTo(100)
-            make.leading.equalTo(view).offset(20)
+            make.leading.equalTo(view).offset(15)
             make.trailing.equalTo(view).offset(-20)
-            make.leading.equalTo(view).offset(20)
         }
         submitButton.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(bio.snp.bottom).offset(40)
@@ -167,11 +175,20 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        NetworkManager.addUser(netID: netID, name: name, year: year, major: major, bio: bio, completion: { () in
-            let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
-            banner.show()
-            self.dismiss(animated: true, completion: nil)
-        })
+        NetworkManager.getUserInfo(netID: netID,
+                                   completion: { user in        // If user exists and profile is being edited
+                                    NetworkManager.modifyUser(netID: netID, name: name, year: year, major: major, bio: bio,
+                                        completion: {() in
+                                        let banner = NotificationBanner(title: "Profile updated!", style: .success)
+                                        banner.show()
+                                        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)})},
+                                   failure: { () in             // If user doesn't exist and a new profile is being created
+                                    NetworkManager.addUser(netID: netID, name: name, year: year, major: major, bio: bio,
+                                        completion: { () in
+                                        let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
+                                        banner.show()
+                                        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+                                        })})
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

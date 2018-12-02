@@ -31,6 +31,7 @@ class ProfileViewController: UIViewController {
         
         nameTextField = UITextField()
         nameTextField.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        nameTextField.isUserInteractionEnabled = false
         nameTextField.placeholder = "Name"
         view.addSubview(nameTextField)
         
@@ -70,8 +71,7 @@ class ProfileViewController: UIViewController {
                                     self.yearTextField.text = user.year
                                     self.majorTextField.text = user.major
                                     self.bio.text = user.bio
-                                    self.bio.isEditable = false
-        },
+                                    self.bio.isEditable = false },
                                    failure: {})
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
@@ -102,7 +102,7 @@ class ProfileViewController: UIViewController {
             make.trailing.equalTo(view).offset(-20)
         }
         signOutButton.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(bio.snp.bottom).offset(40)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
             make.leading.equalTo(view).offset(20)
         }
     }
@@ -118,25 +118,26 @@ class ProfileViewController: UIViewController {
     }
     
     @objc func save() {
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
-        nameTextField.isUserInteractionEnabled = false
-        netIDLabel.isUserInteractionEnabled = false
-        yearTextField.isUserInteractionEnabled = false
-        majorTextField.isUserInteractionEnabled = false
-        bio.isEditable = false
-        
         // Updates user information
         let netID = UserDefaults.standard.string(forKey: "netID")!      // Net ID should always exist because user is logged in
-        guard let name = nameTextField.text else {
+        guard let name = nameTextField.text, name != "" else {
+            let banner = NotificationBanner(title: "No name entered.", style: .danger)
+            banner.show()
             return
         }
-        guard let year = yearTextField.text else {
+        guard let year = yearTextField.text, year != "" else {
+            let banner = NotificationBanner(title: "No year entered.", style: .danger)
+            banner.show()
             return
         }
-        guard let major = majorTextField.text else {
+        guard let major = majorTextField.text, major != "" else {
+            let banner = NotificationBanner(title: "No major entered.", style: .danger)
+            banner.show()
             return
         }
-        guard let bio = bio.text else {
+        guard let bio = bio.text, bio != "" else {
+            let banner = NotificationBanner(title: "No bio entered.", style: .danger)
+            banner.show()
             return
         }
         NetworkManager.modifyUser(netID: netID, name: name, year: year, major: major, bio: bio, completion: {() in
@@ -144,6 +145,12 @@ class ProfileViewController: UIViewController {
             banner.show()
             self.dismiss(animated: true, completion: nil)
         })
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
+        nameTextField.isUserInteractionEnabled = false
+        netIDLabel.isUserInteractionEnabled = false
+        yearTextField.isUserInteractionEnabled = false
+        majorTextField.isUserInteractionEnabled = false
+        self.bio.isEditable = false
     }
     
     @objc func signOut() {

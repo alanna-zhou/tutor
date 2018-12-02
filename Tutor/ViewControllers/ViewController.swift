@@ -15,21 +15,31 @@ import GoogleSignIn
 import AudioToolbox
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    var refreshControl: UIRefreshControl!
     var tutorTuteeSegment: UISegmentedControl!
     var selectedTutorCourses: [Course] = []
     var selectedTuteeCourses: [Course] = []
+    var allCourses: [Course] = []
+    var tutors: [String] = []
+    var tutees: [String] = []
     var bulletinManager: BLTNItemManager!
     
     var coursesLabel: UILabel!
     var tableView: UITableView!
     
     let courseReuseIdentifier = "courseReuseIdentifier"
-    let cellHeight: CGFloat = 60
+    let tutorTuteeReuseIdentifier = "tutorTuteeReuseIdentifier"
+    let courseCellHeight: CGFloat = 60
+    let tutorTuteeCellHeight: CGFloat = 90
+    let cellSpacingHeight: CGFloat = 20
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         checkUsername()
+        
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(pulledToRefresh), for: .valueChanged)
         
         coursesLabel = UILabel()
         coursesLabel.text = "Your Courses"
@@ -40,8 +50,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         tutorTuteeSegment = UISegmentedControl()
         tutorTuteeSegment.translatesAutoresizingMaskIntoConstraints = false
-        tutorTuteeSegment.insertSegment(withTitle: "Tutor", at: 0, animated: true)
-        tutorTuteeSegment.insertSegment(withTitle: "Tutee", at: 1, animated: true)
+        tutorTuteeSegment.insertSegment(withTitle: "All", at: 0, animated: true)
+        tutorTuteeSegment.insertSegment(withTitle: "Tutors", at: 1, animated: true)
+        tutorTuteeSegment.insertSegment(withTitle: "Tutees", at: 2, animated: true)
         tutorTuteeSegment.selectedSegmentIndex = 0
         tutorTuteeSegment.addTarget(self, action: #selector(swapRole), for: .valueChanged)
 
@@ -51,8 +62,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         tableView = UITableView()
         tableView.register(CourseTableViewCell.self, forCellReuseIdentifier: courseReuseIdentifier)
+        tableView.register(TutorTuteeTableViewCell.self, forCellReuseIdentifier: tutorTuteeReuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.refreshControl = refreshControl
         
         let rightFade = AnimationType.from(direction: .right, offset: 60.0)
         tableView.animate(animations: [rightFade], duration: 0.5)
@@ -78,11 +91,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.reloadData()
     }
     
-//    @objc func presentUserSetupView() {
-//        let modalView = ProfileSetupViewController()
-//        present(modalView, animated: true, completion: nil)
-//    }
-    
+    // Presenting views
     @objc func pushProfileView() {
         let navigationView = ProfileViewController()
         navigationView.delegate = self
@@ -94,29 +103,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         navigationController?.pushViewController(navigationView, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            return selectedTutorCourses.count
-        }
-        return selectedTuteeCourses.count
+    @objc func presentUserSetup() {
+        let modalView = PromptViewController()
+        present(modalView, animated: true, completion: nil)
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: courseReuseIdentifier, for: indexPath) as! CourseTableViewCell
-        var course: Course
-        if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            course = selectedTutorCourses[indexPath.row]
-        }
-        else {
-            course = selectedTuteeCourses[indexPath.row]
-        }
-        cell.addInfo(course: course)
-        cell.setNeedsUpdateConstraints()
-        return cell
+    func presentUserSetup(completion: () -> Void) {
+        let modalView = PromptViewController()
+        present(modalView, animated: true, completion: {() in
+            self.bulletinManager?.dismissBulletin(animated: true)})
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return cellHeight
+    @objc func presentProfileSetupView() {
+        let modalView = ProfileSetupViewController()
+        self.bulletinManager?.dismissBulletin(animated: true)
+        present(modalView, animated: true, completion: nil)
+    }
+    
+    @objc func pulledToRefresh() {
+        getCoursesAndUsers()
+        refreshControl.endRefreshing()
     }
     
     func checkUsername() {
@@ -125,9 +131,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             bulletinManager?.dismissBulletin(animated: true)
             let banner = NotificationBanner(title: "Logged in!", style: .success)
             banner.show()
-            AudioServicesPlaySystemSound(1519)      // Vibrates
-            
             login()
+            AudioServicesPlaySystemSound(1519)      // Vibrates
             return
         }
         // Allow users to login
@@ -156,17 +161,143 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let netID = email[email.startIndex..<index]
         UserDefaults.standard.set(netID, forKey: "netID")
         
-//        NetworkManager.getUserInfo(netID: String(netID),
-//            completion: { user in UserDefaults.standard.set(netID, forKey: "netID")},       // Success
-//            failure: { () in self.presentUserSetupView()})     // Failure
+        NetworkManager.getUserInfo(netID: String(netID),
+            completion: { user in
+                if user.bio == "" || user.major == "" || user.name == "" {
+                    self.presentProfileSetupView()
+                }
+                else {
+                    self.bulletinManager?.dismissBulletin(animated: true)
+                }
+        },  failure: { () in self.presentUserSetup()})     // Failure
         
-        NetworkManager.getTutorCourses(netID: String(netID),
-                                       completion: { courses in
-                                        self.selectedTutorCourses = courses
-                                        DispatchQueue.main.async {self.tableView.reloadData()}})
-        NetworkManager.getTuteeCourses(netID: String(netID),
-                                       completion: { courses in
-                                        self.selectedTuteeCourses = courses
-                                        DispatchQueue.main.async {self.tableView.reloadData()}})
+        getCoursesAndUsers()
+    }
+    
+    @objc func getCoursesAndUsers() {
+        if let netID = UserDefaults.standard.string(forKey: "netID") {
+            self.allCourses = []
+            NetworkManager.getTutorCourses(netID: String(netID),
+                                           completion: { courses in
+                                            self.selectedTutorCourses = courses
+                                            self.allCourses.append(contentsOf: courses)
+                                            DispatchQueue.main.async {self.tableView.reloadData()}})
+            NetworkManager.getTuteeCourses(netID: String(netID),
+                                           completion: { courses in
+                                            self.selectedTuteeCourses = courses
+                                            self.allCourses.append(contentsOf: courses)
+                                            DispatchQueue.main.async {self.tableView.reloadData()}})
+            NetworkManager.getTutorsForUser(netID: String(netID),
+                                            completion: { tutors in
+                                                self.tutors = tutors
+                                                DispatchQueue.main.async {self.tableView.reloadData()}})
+            NetworkManager.getTuteesForUser(netID: String(netID),
+                                            completion: { tutees in
+                                                self.tutees = tutees
+                                                DispatchQueue.main.async {self.tableView.reloadData()}})
+        }
+    }
+}
+
+extension ViewController {
+    // Tableview configuration
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            return allCourses.count
+        }
+        else {
+            return 1
+        }
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            return 1
+        }
+        if tutorTuteeSegment.selectedSegmentIndex == 1 {
+            return self.tutors.count
+        }
+        else {
+            return self.tutees.count
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: courseReuseIdentifier, for: indexPath) as! CourseTableViewCell
+            var course: Course
+            course = allCourses[indexPath.row]
+            cell.addInfo(course: course)
+            cell.setNeedsUpdateConstraints()
+            return cell
+        }
+        else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: tutorTuteeReuseIdentifier, for: indexPath) as! TutorTuteeTableViewCell
+            var user: String
+            if tutorTuteeSegment.selectedSegmentIndex == 1 {
+                user = tutors[indexPath.section]
+            }
+            else {
+                user = tutees[indexPath.section]
+            }
+            NetworkManager.getUserInfo(netID: user,
+                                       completion: {user in
+                                        print("User exists in database.")
+                                        cell.addInfo(user: user, isTutor: self.tutorTuteeSegment.selectedSegmentIndex == 0)},
+                                       failure: {})
+            cell.setNeedsUpdateConstraints()
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            return courseCellHeight
+        }
+        return tutorTuteeCellHeight
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tutorTuteeSegment.selectedSegmentIndex == 1 {
+            let userAtIndex = tutors[indexPath.section]
+            let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)
+            navigationController?.pushViewController(userProfileViewController, animated: true)
+        } else if tutorTuteeSegment.selectedSegmentIndex == 2 {
+            let userAtIndex = tutees[indexPath.section]
+            let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)
+            navigationController?.pushViewController(userProfileViewController, animated: true)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            return 0
+        }
+        return cellSpacingHeight
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = UIColor.clear
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            var selectedCourse: Course
+            var selectedUser: String
+            if tutorTuteeSegment.selectedSegmentIndex == 0 {
+                selectedCourse = allCourses[indexPath.row]
+                NetworkManager.deleteUserFromCourse(netID: UserDefaults.standard.string(forKey: "netID")!, subject: selectedCourse.course_subject, number: selectedCourse.course_num, completion: {})
+                allCourses.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            } else if tutorTuteeSegment.selectedSegmentIndex == 1 {
+                selectedUser = tutors[indexPath.section]
+                print("deleting this boi")
+            } else if tutorTuteeSegment.selectedSegmentIndex == 2 {
+                selectedUser = tutees[indexPath.section]
+                print("deleting this boi")
+            }
+        }
     }
 }

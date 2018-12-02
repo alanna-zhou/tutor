@@ -14,6 +14,7 @@
 		CA19E03221A9F6C2005BA9F4 /* WishlistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */; };
 		CA27358821B0A08C00D72DC8 /* RoleSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA27358721B0A08C00D72DC8 /* RoleSelectionViewController.swift */; };
 		CA27358A21B0C86800D72DC8 /* PromptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA27358921B0C86800D72DC8 /* PromptViewController.swift */; };
+		CA3EA9AC21B30A1800B688BD /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3EA9AB21B30A1800B688BD /* Error.swift */; };
 		CA5547D621AA269C004C1197 /* CourseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */; };
 		CA5547D821AA59C7004C1197 /* TutorTuteeCatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */; };
 		CA5547DA21AA6619004C1197 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5547D921AA6619004C1197 /* ViewController.swift */; };
@@ -37,6 +38,7 @@
 		CA19E03121A9F6C2005BA9F4 /* WishlistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishlistViewController.swift; sourceTree = "<group>"; };
 		CA27358721B0A08C00D72DC8 /* RoleSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleSelectionViewController.swift; sourceTree = "<group>"; };
 		CA27358921B0C86800D72DC8 /* PromptViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptViewController.swift; sourceTree = "<group>"; };
+		CA3EA9AB21B30A1800B688BD /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		CA5547D521AA269C004C1197 /* CourseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseTableViewCell.swift; sourceTree = "<group>"; };
 		CA5547D721AA59C7004C1197 /* TutorTuteeCatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorTuteeCatalogViewController.swift; sourceTree = "<group>"; };
 		CA5547D921AA6619004C1197 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				CA051CAA21AE123600B0A0E9 /* NetworkManager.swift */,
+				CA3EA9AB21B30A1800B688BD /* Error.swift */,
 				CABDE2C921A60E6C00BB77CF /* Course.swift */,
 				CAC7842F21A532460058CDCF /* User.swift */,
 			);
@@ -327,6 +330,7 @@
 				CA27358A21B0C86800D72DC8 /* PromptViewController.swift in Sources */,
 				CAC7843021A532460058CDCF /* User.swift in Sources */,
 				CABDE2CA21A60E6C00BB77CF /* Course.swift in Sources */,
+				CA3EA9AC21B30A1800B688BD /* Error.swift in Sources */,
 				CAEABFEA21AD1916004DE148 /* ProfileViewController.swift in Sources */,
 				CAA73EB621AC923000721663 /* LoginBulletinPage.swift in Sources */,
 				CA5547D621AA269C004C1197 /* CourseTableViewCell.swift in Sources */,
