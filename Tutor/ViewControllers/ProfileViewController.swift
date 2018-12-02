@@ -53,14 +53,14 @@ class ProfileViewController: UIViewController {
         view.addSubview(netIDLabel)
         
         yearTextField = UITextField()
-        yearTextField.font = UIFont.systemFont(ofSize: 22, weight: .regular)
+        yearTextField.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         yearTextField.isUserInteractionEnabled = false
         yearTextField.placeholder = "Year"
         yearTextField.textAlignment = .center
         view.addSubview(yearTextField)
         
         majorTextField = UITextField()
-        majorTextField.font = UIFont.systemFont(ofSize: 22, weight: .regular)
+        majorTextField.font = UIFont.systemFont(ofSize: 18	, weight: .regular)
         majorTextField.isUserInteractionEnabled = false
         majorTextField.placeholder = "Major"
         majorTextField.textAlignment = .center
@@ -113,12 +113,12 @@ class ProfileViewController: UIViewController {
             make.centerX.equalTo(view)
         }
         yearTextField.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(netIDLabel.snp.bottom).offset(15)
-            make.centerX.equalTo(view).offset(-40)
+            make.top.equalTo(netIDLabel.snp.bottom).offset(10)
+            make.centerX.equalTo(view)
         }
         majorTextField.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(yearTextField)
-            make.leading.equalTo(yearTextField.snp.trailing).offset(10)
+            make.top.equalTo(yearTextField.snp.bottom).offset(10)
+            make.centerX.equalTo(view)
         }
         bio.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(majorTextField.snp.bottom).offset(20)
