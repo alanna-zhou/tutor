@@ -11,6 +11,7 @@ class User(db.Model):
     major = db.Column(db.String, nullable=False)
     bio = db.Column(db.String, nullable=False)
     url = db.Column(db.String, nullable=False, default='https://www.poweron-it.com/images/easyblog_shared/July_2018/7-4-18/totw_network_profile_400.jpg')
+    color = db.Column(db.String, nullable=False)
     user_to_course = db.relationship('UserToCourse', cascade='delete')
 
     def __init__(self, **kwargs):
@@ -20,6 +21,7 @@ class User(db.Model):
       self.major = kwargs.get('major')
       self.bio = kwargs.get('bio')
       self.url = kwargs.get('url')
+      self.color = kwargs.get('color')
 
     def serialize(self):
       return {
@@ -29,6 +31,7 @@ class User(db.Model):
           'major': self.major,
           'bio': self.bio,
           'url': self.url,
+          'color': self.color,
       }
 
 class Course(db.Model):

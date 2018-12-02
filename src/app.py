@@ -27,21 +27,24 @@ def insert_initial_values(*args, **kwargs):
     name='Alanna Zhou',
     year=2022,
     major='Computer Science',
-    bio='I like fried bananas.'
+    bio='I like fried bananas.',
+    color=''
   ))
   db.session.add(User(
     net_id='lae66',
     name='Luis Enriquez',
     year=2022,
     major='Mechanical Engineering',
-    bio='I like crude memes.'
+    bio='I like crude memes.',
+    color=''
   ))
   db.session.add(User(
     net_id='slh268',
     name='Sarah Huang',
     year=2022,
     major='Chemical Engineering',
-    bio='Yeetaki Mushroomz!'
+    bio='Yeetaki Mushroomz!',
+    color=''
   ))
   db.session.commit()
   subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
@@ -69,12 +72,12 @@ def create_user():
       year=post_body.get('year', ''), 
       major=post_body.get('major', ''), 
       bio=post_body.get('bio', ''),
-      url=post_body.get('url')
+      url=post_body.get('url'),
+      color=post_body.get('color', '')
   )
   db.session.add(user)
   db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
-
 
 @app.route('/api/user/<string:net_id>/', methods=['POST'])
 def edit_user(net_id):
