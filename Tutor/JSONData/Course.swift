@@ -22,7 +22,7 @@ struct AddCourse: Codable {
     let is_tutor: Bool // true if tutor, false if tutee
     let course_subject: String
     let course_num: Int
-    let course_number: String
+    let course_name: String
 }
 
 struct AddCourseData: Codable {

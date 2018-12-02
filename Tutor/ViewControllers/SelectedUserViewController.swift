@@ -122,22 +122,25 @@ class SelectedUserViewController: UIViewController {
             return
         }
         if isTutor {
-            tutorID = self.netID
-            tuteeID = userNetID
-            
+            tutorID = self.netID    // Added tutor
+            tuteeID = userNetID     // User adding tutor
         }
         else {
-            tutorID = userNetID
-            tuteeID = self.netID
+            tutorID = userNetID     // User adding tutee
+            tuteeID = self.netID    // Added tutee
         }
-        NetworkManager.addCourseToUser(netID: self.netID, isTutor: isTutor, subject: course.course_subject, number: course.course_num, completion: {}, failure: {error in})
-        NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: course,
-                                  completion: {() in
-                                    let banner = NotificationBanner(title: "User added!", style: .success)
-                                    banner.show()},
-                                  failure: { error in
-                                    let banner = NotificationBanner(title: "You can't add this user.", style: .danger)
-                                    banner.show()})
+        NetworkManager.addCourseToUser(netID: userNetID, isTutor: !isTutor, subject: course.course_subject, number: course.course_num, completion: {
+            NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: self.course,
+                                      completion: {() in
+                                        let banner = NotificationBanner(title: "User added!", style: .success)
+                                        banner.show()},
+                                      failure: { error in
+                                        let banner = NotificationBanner(title: error, style: .danger)
+                                        banner.show()})
+        }, failure: { error in
+            let banner = NotificationBanner(title: error, style: .danger)
+            banner.show()
+        })
         (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
     }
 }

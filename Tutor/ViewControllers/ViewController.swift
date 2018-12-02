@@ -164,8 +164,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         NetworkManager.getUserInfo(netID: String(netID),
             completion: { user in
                 self.bulletinManager?.dismissBulletin(animated: true)
+                self.tableView.reloadData()
         },  failure: { () in
             self.bulletinManager?.dismissBulletin(animated: true)
+            self.tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.presentIntroViewController()}     // Failure
             })
@@ -258,10 +260,10 @@ extension ViewController {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         getCoursesAndUsers()
-        if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            let tutorTuteeViewController = TutorTuteeCatalogViewController(course: allCourses[indexPath.row])
-            navigationController?.pushViewController(tutorTuteeViewController, animated: true)
-        }
+//        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+//            let tutorTuteeViewController = TutorTuteeCatalogViewController(course: allCourses[indexPath.row])
+//            navigationController?.pushViewController(tutorTuteeViewController, animated: true)
+//        }
         if tutorTuteeSegment.selectedSegmentIndex == 1 {
             let userAtIndex = tutors[indexPath.section]
             let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)

@@ -23,8 +23,6 @@ class RoleSelectionViewController: UIViewController {
     var tutorLabel: UILabel!
     var tuteeLabel: UILabel!
     var bothButton: UIButton!
-    var tutorColor = UIColor(red: 0.298, green: 0.737, blue: 0.871, alpha: 1) // #4cbcde
-    var tuteeColor = UIColor(red: 0.937, green: 0.486, blue: 0.714, alpha: 1) // #ef7cb6
     var bothColor = UIColor.white
     var buttonDiameter: CGFloat = 170
     var role: Role!
@@ -84,10 +82,10 @@ class RoleSelectionViewController: UIViewController {
         presentProfileSetup(color: bothColor, role: .both, id: "both")
     }
     func tutor() {
-        presentProfileSetup(color: tutorColor, role: .tutor, id: "tutor")
+        presentProfileSetup(color: ColorConverter.hexStringToUIColor(hex: warm), role: .tutor, id: "tutor")
     }
     func tutee() {
-        presentProfileSetup(color: tuteeColor, role: .tutee, id: "tutee")
+        presentProfileSetup(color: ColorConverter.hexStringToUIColor(hex: cool), role: .tutee, id: "tutee")
     }
     
     func setUpConstraints() {

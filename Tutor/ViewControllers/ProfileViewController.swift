@@ -33,7 +33,7 @@ class ProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         let layer = CAShapeLayer()
-        layer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: view.frame.midY, width: view.frame.width, height: view.frame.height / 2), cornerRadius: 0).cgPath
+        layer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: view.frame.height / 3, width: view.frame.width, height: view.frame.height * 2 / 3), cornerRadius: 0).cgPath
         layer.fillColor = UIColor.white.cgColor
         view.layer.addSublayer(layer)
         
@@ -41,25 +41,29 @@ class ProfileViewController: UIViewController {
         view.addSubview(imageView)
         
         nameTextField = UITextField()
-        nameTextField.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        nameTextField.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         nameTextField.isUserInteractionEnabled = false
         nameTextField.placeholder = "Name"
+        nameTextField.textAlignment = .center
         view.addSubview(nameTextField)
         
         netIDLabel = UILabel()
-        netIDLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        netIDLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
+        netIDLabel.textAlignment = .center
         view.addSubview(netIDLabel)
         
         yearTextField = UITextField()
-        yearTextField.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        yearTextField.font = UIFont.systemFont(ofSize: 22, weight: .regular)
         yearTextField.isUserInteractionEnabled = false
         yearTextField.placeholder = "Year"
+        yearTextField.textAlignment = .center
         view.addSubview(yearTextField)
         
         majorTextField = UITextField()
-        majorTextField.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        majorTextField.font = UIFont.systemFont(ofSize: 22, weight: .regular)
         majorTextField.isUserInteractionEnabled = false
         majorTextField.placeholder = "Major"
+        majorTextField.textAlignment = .center
         view.addSubview(majorTextField)
         
         bio = UITextView()
@@ -96,21 +100,21 @@ class ProfileViewController: UIViewController {
     
     func setUpConstraints() {
         imageView.snp.makeConstraints{ (make) -> Void in
-            make.center.equalTo(view)
-            make.height.equalTo(100)
-            make.width.equalTo(100)
+            make.centerY.equalTo(view).offset(-1 * view.frame.height / 6)
+            make.centerX.equalTo(view)
+            make.height.width.equalTo(100)
         }
         nameTextField.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(imageView.snp.bottom).offset(30)
-            make.leading.equalTo(view).offset(20)
+            make.top.equalTo(imageView.snp.bottom).offset(10)
+            make.centerX.equalTo(view)
         }
         netIDLabel.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(nameTextField)
-            make.leading.equalTo(nameTextField.snp.trailing).offset(20)
+            make.top.equalTo(nameTextField.snp.bottom).offset(10)
+            make.centerX.equalTo(view)
         }
         yearTextField.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(nameTextField.snp.bottom).offset(20)
-            make.leading.equalTo(view).offset(20)
+            make.top.equalTo(netIDLabel.snp.bottom).offset(15)
+            make.centerX.equalTo(view).offset(-40)
         }
         majorTextField.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(yearTextField)
