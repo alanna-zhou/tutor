@@ -280,6 +280,56 @@ def match_users():
   }
   return json.dumps({'success': True, 'data': result}), 200
 
+@app.route('/api/matches/', methods=['GET'])
+def get_matches():
+  query = Match.query.all()
+  matches = []
+  for m in query:
+    tutor = User.query.filter_by(id=m.tutor_id).first()
+    tutee = User.query.filter_by(id=m.tutee_id).first()
+    course = Course.query.filter_by(id=m.course_id).first()
+    result = {
+      'tutor_net_id': tutor.net_id,
+      'tutee_net_id': tutee.net_id,
+      'course_subject': course.course_subject,
+      'course_num': course.course_num,
+      'course_name': course.course_name
+    }
+    matches.append(result)
+  return json.dumps({'success': True, 'data': matches}), 200
+
+@app.route('/api/match/delete/', methods=['POST'])
+def delete_match():
+  post_body = json.loads(request.data)
+  keys = ['tutor_net_id', 'tutee_net_id', 'course_subject', 'course_num']
+  for k in keys:
+    if k not in post_body:
+      return json.dumps({'success': False, 'error': 
+          'Missing necessary parameter to match a tutor and tutee!'}), 404
+  course = Course.query.filter_by(course_subject=post_body.get('course_subject'), 
+      course_num=post_body.get('course_num')).first()
+  if course is None:
+    return json.dumps({'success': False, 'error': 'Invalid course!'}), 404
+  tutor = User.query.filter_by(net_id=post_body.get('tutor_net_id')).first()
+  if is_valid_tutor(tutor, course):
+    return json.dumps({'success': False, 'error': 'User is a valid or available tutor!'}), 404
+  tutee = User.query.filter_by(net_id=post_body.get('tutee_net_id')).first()
+  if is_valid_tutee(tutee, course):
+    return json.dumps({'success': False, 'error': 'User is a valid or available tutee!'}), 404
+  match = Match.query.filter_by(tutor_id=tutor.id, tutee_id=tutee.id, course_id=course.id).first()
+  if match is None:
+    return json.dumps({'success': False, 'error': 'No match to delete; match does not exist!'}), 404
+  db.session.delete(match)
+  db.session.commit()
+  result = {
+    'tutor_net_id': tutor.net_id,
+    'tutee_net_id': tutee.net_id,
+    'course_subject': course.course_subject,
+    'course_num': course.course_num,
+    'course_name': course.course_name
+  }
+  return json.dumps({'success': True, 'data': result}), 200
+
 def is_valid_tutor(tutor, course):
   is_tutor = UserToCourse.query.filter_by(user_id=tutor.id, course_id=course.id, is_tutor=True).first()
   match = Match.query.filter_by(tutor_id=tutor.id, course_id=course.id).first()
