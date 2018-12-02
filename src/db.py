@@ -78,11 +78,6 @@ class Match(db.Model):
     tutor = db.relationship("User", foreign_keys=[tutor_id])
     tutee = db.relationship("User", foreign_keys=[tutee_id])
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-
-    # company_id = Column(Integer, ForeignKey('company.id'), nullable=False)
-    # stakeholder_id = Column(Integer, ForeignKey('company.id'), nullable=False)
-    # company = relationship("Company", foreign_keys=[company_id])
-    # stakeholder = relationship("Company", foreign_keys=[stakeholder_id])
  
     def __init__(self, **kwargs):
       self.tutor_id = kwargs.get('tutor_id')

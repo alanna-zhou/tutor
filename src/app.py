@@ -75,6 +75,7 @@ def create_user():
   db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
 
+
 @app.route('/api/user/<string:net_id>/', methods=['POST'])
 def edit_user(net_id):
   user = User.query.filter_by(net_id=net_id).first()
@@ -87,6 +88,15 @@ def edit_user(net_id):
     except:
       continue
   user = User.query.filter_by(net_id=net_id).first()
+  db.session.commit()
+  return json.dumps({'success': True, 'data': user.serialize()}), 200
+
+@app.route('/api/user/<string:net_id>/', methods=['DELETE'])
+def delete_user(net_id):
+  user = User.query.filter_by(net_id=net_id).first()
+  if user is None:
+    return json.dumps({'success': False, 'error': 'User does not exist!'}), 404
+  db.session.delete(user)
   db.session.commit()
   return json.dumps({'success': True, 'data': user.serialize()}), 200
 
@@ -286,8 +296,14 @@ def get_matches():
   matches = []
   for m in query:
     tutor = User.query.filter_by(id=m.tutor_id).first()
+    if tutor is None: 
+      continue
     tutee = User.query.filter_by(id=m.tutee_id).first()
+    if tutee is None:
+      continue
     course = Course.query.filter_by(id=m.course_id).first()
+    if course is None:
+      continue
     result = {
       'tutor_net_id': tutor.net_id,
       'tutee_net_id': tutee.net_id,
