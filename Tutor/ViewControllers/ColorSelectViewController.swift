@@ -17,9 +17,11 @@ class ColorSelectViewController: UIViewController, UICollectionViewDelegate, UIC
     var instructionLabel: UILabel!
     var warmColors: [UIColor]!
     var coolColors: [UIColor]!
+    var warmColorsHex: [String]!
+    var coolColorsHex: [String]!
     var warm: Bool = true
-    var selectedWarm: UIColor!
-    var selectedCool: UIColor!
+    var selectedWarmHex: String!
+    var selectedCoolHex: String!
     
     let colorReuseIdentifier = "colorReuseIdentifier"
     
@@ -42,6 +44,7 @@ class ColorSelectViewController: UIViewController, UICollectionViewDelegate, UIC
                     UIColor(red: 0.933, green: 0.431, blue: 0.588, alpha: 1), // #ee6e96
                     UIColor(red: 0.937, green: 0.486, blue: 0.714, alpha: 1), // #ef7cb6
                     UIColor(red: 0.937, green: 0.541, blue: 0.812, alpha: 1)] // #ef8acf
+        warmColorsHex = ["#edb742", "#eca63f", "#ed954c", "#ed7f5f", "#ed6c7b", "#ee6e96", "#ef7cb6", "#ef8acf"]
         coolColors = [UIColor(red: 0.361, green: 0.831, blue: 0.784, alpha: 1), // #5cd4c8
                     UIColor(red: 0.298, green: 0.737, blue: 0.871, alpha: 1), // #4cbcde
                     UIColor(red: 0.243, green: 0.663, blue: 0.929, alpha: 1), // #3ea9ed
@@ -50,6 +53,7 @@ class ColorSelectViewController: UIViewController, UICollectionViewDelegate, UIC
                     UIColor(red: 0.624, green: 0.541, blue: 0.914, alpha: 1), // #9f8ae9
                     UIColor(red: 0.757, green: 0.518, blue: 0.898, alpha: 1), // #c184e5
                     UIColor(red: 0.784, green: 0.514, blue: 0.902, alpha: 1)] // #c883e6
+        coolColorsHex = ["#5cd4c8", "#4cbcde", "#3ea9ed", "#4798eb", "#7190ec", "#9f8ae9", "#c184e5", "#c883e6"]
         
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 10
@@ -119,18 +123,20 @@ class ColorSelectViewController: UIViewController, UICollectionViewDelegate, UIC
         if warm {
             warm = false
             instructionLabel.text = "Choose your favorite cool color!"
-            selectedWarm = warmColors[indexPath.item]
+            selectedWarmHex = warmColorsHex[indexPath.item]
             collectionView.reloadData()
         }
         else {
-            selectedCool = coolColors[indexPath.item]
+            selectedCoolHex = coolColorsHex[indexPath.item]
             collectionView.reloadData()
-            nextScreen(warm: selectedWarm, cool: selectedCool)
+            nextScreen(warm: selectedWarmHex, cool: selectedCoolHex)
         }
     }
     
-    func nextScreen(warm: UIColor, cool: UIColor) {
+    func nextScreen(warm: String, cool: String) {
         let profilePictureView = ProfilePictureViewController()
+        profilePictureView.delegate = self
+        profilePictureView.addInfo(warm: selectedWarmHex, cool: selectedCoolHex)
         present(profilePictureView, animated: true, completion: nil)
     }
 }

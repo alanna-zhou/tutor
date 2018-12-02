@@ -28,16 +28,21 @@ class RoleSelectionViewController: UIViewController {
     var bothColor = UIColor.white
     var buttonDiameter: CGFloat = 170
     var role: Role!
+    var warm: String!
+    var cool: String!
+    var imageURL: String!
+    
+    weak var delegate: PromptViewController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        tutorButton = TutorShape(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY)
+        tutorButton = TutorShape(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY, color: warm)
         tutorButton.isUserInteractionEnabled = false
         view.addSubview(tutorButton)
         
-        tuteeButton = TuteeShape(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY)
+        tuteeButton = TuteeShape(minX: view.frame.minX, maxX: view.frame.maxX, minY: view.frame.minY, maxY: view.frame.maxY, color: cool)
         tuteeButton.isUserInteractionEnabled = false
         view.addSubview(tuteeButton)
         
@@ -67,6 +72,12 @@ class RoleSelectionViewController: UIViewController {
         view.addSubview(tuteeLabel)
         
         setUpConstraints()
+    }
+    
+    func addInfo(warm: String, cool: String, imageURL: String) {
+        self.warm = warm
+        self.cool = cool
+        self.imageURL = imageURL
     }
     
     @objc func both() {
@@ -104,6 +115,8 @@ class RoleSelectionViewController: UIViewController {
     func presentProfileSetup(color: UIColor, role: Role, id: String) {
         let profileSetupView = ProfileSetupViewController(color: color, role: role, id: id)
         profileSetupView.hero.isEnabled = true
+        profileSetupView.delegate = self
+        profileSetupView.addInfo(warm: warm, cool: cool, imageURL: imageURL)
         present(profileSetupView, animated: true, completion: nil)
     }
     
@@ -128,13 +141,15 @@ class TutorShape: UIView {
     var maxX: CGFloat!
     var minY: CGFloat!
     var maxY: CGFloat!
+    var color: String!
     
-    init(minX: CGFloat, maxX: CGFloat, minY: CGFloat, maxY: CGFloat) {
+    init(minX: CGFloat, maxX: CGFloat, minY: CGFloat, maxY: CGFloat, color: String) {
         super.init(frame: .zero)
         self.minX = minX
         self.maxX = maxX
         self.minY = minY
         self.maxY = maxY
+        self.color = color
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -150,7 +165,7 @@ class TutorShape: UIView {
         path.close()
         
         let shapeLayer = CAShapeLayer()
-        shapeLayer.fillColor = UIColor(red: 0.298, green: 0.737, blue: 0.871, alpha: 1).cgColor
+        shapeLayer.fillColor = ColorConverter.hexStringToUIColor(hex: color).cgColor
         shapeLayer.path = path.cgPath
         layer.addSublayer(shapeLayer)
     }
@@ -163,13 +178,15 @@ class TuteeShape: UIView {
     var maxX: CGFloat!
     var minY: CGFloat!
     var maxY: CGFloat!
+    var color: String!
     
-    init(minX: CGFloat, maxX: CGFloat, minY: CGFloat, maxY: CGFloat) {
+    init(minX: CGFloat, maxX: CGFloat, minY: CGFloat, maxY: CGFloat, color: String) {
         super.init(frame: .zero)
         self.minX = minX
         self.maxX = maxX
         self.minY = minY
         self.maxY = maxY
+        self.color = color
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -185,7 +202,7 @@ class TuteeShape: UIView {
         path.close()
         
         let shapeLayer = CAShapeLayer()
-        shapeLayer.fillColor = UIColor(red: 0.937, green: 0.486, blue: 0.714, alpha: 1).cgColor
+        shapeLayer.fillColor = ColorConverter.hexStringToUIColor(hex: color).cgColor
         shapeLayer.path = path.cgPath
         layer.addSublayer(shapeLayer)
     }

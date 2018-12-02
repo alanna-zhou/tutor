@@ -16,6 +16,10 @@ class ProfilePictureViewController: UIViewController, UICollectionViewDelegate, 
     var instructionLabel: UILabel!
     var imageURLs: [String] = []
     var selectedImageURL: String!
+    var cool: String!
+    var warm: String!
+    
+    weak var delegate: ColorSelectViewController!
 
     let profilePictureReuseIdentifier = "profilePictureReuseIdentifier"
 
@@ -67,6 +71,11 @@ class ProfilePictureViewController: UIViewController, UICollectionViewDelegate, 
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
         }
     }
+    
+    func addInfo(warm: String, cool: String) {
+        self.cool = cool
+        self.warm = warm
+    }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imageURLs.count
@@ -91,6 +100,8 @@ class ProfilePictureViewController: UIViewController, UICollectionViewDelegate, 
 
     func nextScreen(imageURL: String) {
         let promptView = PromptViewController()
+        promptView.delegate = self
+        promptView.addInfo(warm: warm, cool: cool, imageURL: imageURL)
         present(promptView, animated: true, completion: nil)
     }
 }

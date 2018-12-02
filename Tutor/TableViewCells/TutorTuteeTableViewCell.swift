@@ -57,7 +57,7 @@ class TutorTuteeTableViewCell: UITableViewCell {
     func addInfo(user: User, isTutor: Bool) {
         nameLabel.text = user.name
         userInfoLabel.text = "\(user.net_id) • \(user.year) • \(user.major)"
-        contentView.backgroundColor = chooseColor(cool: isTutor)
+        contentView.backgroundColor = chooseColor(cool: !isTutor)
     }
     
     func setColor(tutor: Bool) {

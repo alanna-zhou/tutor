@@ -29,6 +29,17 @@ class ProfileViewController: UIViewController {
         title = "Profile"
         view.backgroundColor = .white
         
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        let layer = CAShapeLayer()
+        layer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: view.frame.midY, width: view.frame.width, height: view.frame.height / 2), cornerRadius: 0).cgPath
+        layer.fillColor = UIColor.white.cgColor
+        view.layer.addSublayer(layer)
+        
+        imageView = UIImageView()
+        view.addSubview(imageView)
+        
         nameTextField = UITextField()
         nameTextField.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         nameTextField.isUserInteractionEnabled = false
@@ -59,7 +70,7 @@ class ProfileViewController: UIViewController {
         signOutButton = UIButton()
         signOutButton.setTitle("Sign out", for: .normal)
         signOutButton.setTitleColor(.black, for: .normal)
-        signOutButton.titleLabel?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        signOutButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .light)
         signOutButton.addTarget(self, action: #selector(signOut), for: .touchUpInside)
         view.addSubview(signOutButton)
         
@@ -71,7 +82,11 @@ class ProfileViewController: UIViewController {
                                     self.yearTextField.text = user.year
                                     self.majorTextField.text = user.major
                                     self.bio.text = user.bio
-                                    self.bio.isEditable = false },
+                                    self.bio.isEditable = false
+                                    self.imageView.image = UIImage(named: user.pic_name)
+                                    self.view.backgroundColor = ColorConverter.hexStringToUIColor(hex: user.warm_color)
+                                    print(user.cool_color)
+        },
                                    failure: {})
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))
@@ -80,8 +95,13 @@ class ProfileViewController: UIViewController {
     }
     
     func setUpConstraints() {
+        imageView.snp.makeConstraints{ (make) -> Void in
+            make.center.equalTo(view)
+            make.height.equalTo(100)
+            make.width.equalTo(100)
+        }
         nameTextField.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.centerY.equalTo(imageView.snp.bottom).offset(30)
             make.leading.equalTo(view).offset(20)
         }
         netIDLabel.snp.makeConstraints{ (make) -> Void in
@@ -100,13 +120,13 @@ class ProfileViewController: UIViewController {
             make.top.equalTo(majorTextField.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
             make.trailing.equalTo(view).offset(-20)
+            make.height.equalTo(70)
         }
         signOutButton.snp.makeConstraints{ (make) -> Void in
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
             make.leading.equalTo(view).offset(20)
         }
     }
-    
 
     @objc func enableEditing() {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(save))
@@ -164,5 +184,21 @@ class ProfileViewController: UIViewController {
         let banner = NotificationBanner(title: "Signed out successfully!", style: .success)
         banner.show()
         delegate?.checkUsername()
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            if self.view.frame.origin.y == 0{
+                self.view.frame.origin.y -= keyboardSize.height
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            if self.view.frame.origin.y != 0{
+                self.view.frame.origin.y += keyboardSize.height
+            }
+        }
     }
 }

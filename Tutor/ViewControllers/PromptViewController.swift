@@ -14,6 +14,11 @@ class PromptViewController: UIViewController {
 
     var promptLabel: UILabel!
     var tapButton: UIButton!
+    var warm: String!
+    var cool: String!
+    var imageURL: String!
+    
+    weak var delegate: ProfilePictureViewController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,9 +54,17 @@ class PromptViewController: UIViewController {
         }
     }
     
+    func addInfo(warm: String, cool: String, imageURL: String) {
+        self.warm = warm
+        self.cool = cool
+        self.imageURL = imageURL
+    }
+    
     @objc func nextScreen() {
         let roleSelectView = RoleSelectionViewController()
+        roleSelectView.delegate = self
         roleSelectView.hero.isEnabled = true
+        roleSelectView.addInfo(warm: warm, cool: cool, imageURL: imageURL)
         present(roleSelectView, animated: true, completion: nil)
     }
 }

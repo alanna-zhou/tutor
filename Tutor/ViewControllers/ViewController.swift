@@ -257,6 +257,7 @@ extension ViewController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        getCoursesAndUsers()
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
             let tutorTuteeViewController = TutorTuteeCatalogViewController(course: allCourses[indexPath.row])
             navigationController?.pushViewController(tutorTuteeViewController, animated: true)
@@ -288,18 +289,12 @@ extension ViewController {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             var selectedCourse: Course
-            var selectedUser: String
+            let netID = UserDefaults.standard.string(forKey: "netID")!
             if tutorTuteeSegment.selectedSegmentIndex == 0 {
                 selectedCourse = allCourses[indexPath.row]
-                NetworkManager.deleteUserFromCourse(netID: UserDefaults.standard.string(forKey: "netID")!, subject: selectedCourse.course_subject, number: selectedCourse.course_num, completion: {})
+                NetworkManager.deleteUserFromCourse(netID: netID, subject: selectedCourse.course_subject, number: selectedCourse.course_num, completion: {})
                 allCourses.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
-            } else if tutorTuteeSegment.selectedSegmentIndex == 1 {
-                selectedUser = tutors[indexPath.section]
-                print("deleting this boi")
-            } else if tutorTuteeSegment.selectedSegmentIndex == 2 {
-                selectedUser = tutees[indexPath.section]
-                print("deleting this boi")
             }
         }
     }
