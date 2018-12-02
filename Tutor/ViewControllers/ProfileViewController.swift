@@ -71,8 +71,7 @@ class ProfileViewController: UIViewController {
                                     self.yearTextField.text = user.year
                                     self.majorTextField.text = user.major
                                     self.bio.text = user.bio
-                                    self.bio.isEditable = false
-        },
+                                    self.bio.isEditable = false },
                                    failure: {})
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(enableEditing))

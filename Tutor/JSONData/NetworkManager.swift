@@ -22,8 +22,15 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
                 failure()
             }
         }
@@ -42,8 +49,15 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
                 failure()
             }
         }
@@ -62,8 +76,15 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
@@ -80,8 +101,15 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
@@ -99,8 +127,15 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
                 failure()
             }
         }
@@ -119,9 +154,96 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
                 failure()
+            }
+        }
+    }
+    
+    static func getTutorsForUser(netID: String, completion: @escaping ([String]) -> Void) {
+        let courseTuteesURL = "http://35.190.144.148/api/user/\(netID)/tutors/"
+        Alamofire.request(courseTuteesURL, method: .get).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                print("Successful response")
+                if let userdata = try? decoder.decode(UserNetIDData.self, from: data) {
+                    if userdata.success {
+                        completion((userdata.data))
+                    }
+                }
+            case let .failure(error):
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    static func getTuteesForUser(netID: String, completion: @escaping ([String]) -> Void) {
+        let courseTuteesURL = "http://35.190.144.148/api/user/\(netID)/tutees/"
+        Alamofire.request(courseTuteesURL, method: .get).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                print("Successful response")
+                if let userdata = try? decoder.decode(UserNetIDData.self, from: data) {
+                    if userdata.success {
+                        completion((userdata.data))
+                    }
+                }
+            case let .failure(error):
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    static func deleteUserFromCourse(netID: String, subject: String, number: Int, completion: @escaping () -> Void) {
+        let deleteUserFromCourseURL = "http://35.190.144.148/api/user/delete-course/"
+        let parameters: Parameters = ["net_id": netID,
+                                      "course_subject": subject,
+                                      "course_num": number]
+        Alamofire.request(deleteUserFromCourseURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                if let user = try? decoder.decode(DeletedUserFromCourseData.self, from: data) {
+                    if user.success {
+                        completion()
+                    }
+                }
+            case let .failure(error):
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
@@ -143,8 +265,15 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Couldn't connect to server!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
@@ -166,13 +295,20 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
     
-    static func addCourseToUser(netID: String, isTutor: Bool, subject: String, number: Int, completion: @escaping () -> Void) {
+    static func addCourseToUser(netID: String, isTutor: Bool, subject: String, number: Int, completion: @escaping () -> Void, failure: @escaping (String) -> Void) {
         let addCourseURL = "http://35.190.144.148/api/user/add-course/"
         let parameters: Parameters = ["net_id": netID,
                                       "is_tutor": isTutor,
@@ -189,8 +325,16 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                        failure(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
@@ -212,8 +356,15 @@ class NetworkManager {
                     }
                 }
             case let .failure(error):
-                print("Connection to server failed!")
-                print(error.localizedDescription)
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
+                }
             }
         }
     }

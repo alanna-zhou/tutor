@@ -36,3 +36,20 @@ struct UserMatch: Codable {
     let course_subject: String
     let course_num: Int
 }
+
+struct UserNetIDData: Codable {
+    let success: Bool
+    let data: [String]
+}
+
+struct DeletedUserFromCourseData: Codable {
+    let success: Bool
+    let data: DeletedUserFromCourse
+}
+
+struct DeletedUserFromCourse: Codable {
+    let net_id: String
+    let course_subject: String
+    let course_num: Int
+    let course_name: String
+}

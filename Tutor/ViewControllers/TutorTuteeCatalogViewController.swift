@@ -43,6 +43,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
         tutorTuteeSegment.addTarget(self, action: #selector(swapRole), for: .valueChanged)
         
         self.navigationItem.titleView = tutorTuteeSegment
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(displayBulletin))
         
         tableView = UITableView()
         tableView.register(TutorTuteeTableViewCell.self, forCellReuseIdentifier: tutorTuteeReuseIdentifier)
@@ -97,10 +98,14 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
             page.actionHandler = { (item: BLTNActionItem) in
                 self.bulletinManager.dismissBulletin(animated: true)
                 let netID = UserDefaults.standard.string(forKey: "netID")!
-                NetworkManager.addCourseToUser(netID: netID, isTutor: false, subject: self.course.course_subject, number: self.course.course_num, completion: {})
-                let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
-                banner.show()
-                (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
+                NetworkManager.addCourseToUser(netID: netID, isTutor: false, subject: self.course.course_subject, number: self.course.course_num,
+                                               completion: {let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
+                                                banner.show()
+                                                self.tutees.append(netID)
+                                                self.tableView.reloadData()},
+                                               failure: {error in
+                                                let banner = NotificationBanner(title: error, style: .danger)
+                                                banner.show()})
             }
             page.alternativeHandler = { (item: BLTNActionItem) in
                 self.bulletinManager.dismissBulletin(animated: true)
@@ -111,11 +116,68 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
             page.actionHandler = { (item: BLTNActionItem) in
                 self.bulletinManager.dismissBulletin(animated: true)
                 let netID = UserDefaults.standard.string(forKey: "netID")!
-                NetworkManager.addCourseToUser(netID: netID, isTutor: true, subject: self.course.course_subject, number: self.course.course_num, completion: {})
-                let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
-                banner.show()
-                (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
+                NetworkManager.addCourseToUser(netID: netID, isTutor: true, subject: self.course.course_subject, number: self.course.course_num,
+                                               completion: {let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
+                                                banner.show()
+                                                self.tutors.append(netID)
+                                                self.tableView.reloadData()},
+                                               failure: {error in
+                                                let banner = NotificationBanner(title: error, style: .danger)
+                                                banner.show()})
             }
+            page.alternativeHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+            }
+        }
+        else {
+            return
+        }
+        bulletinManager = {
+            let rootItem: BLTNItem = page
+            return BLTNItemManager(rootItem: rootItem)
+        }()
+        bulletinManager.backgroundViewStyle = .blurredDark
+        bulletinManager.showBulletin(above: self)
+    }
+    
+    @objc func displayBulletin() {
+        let page = BLTNPageItem(title: "Add Class")
+        page.actionButtonTitle = "Sure"
+        page.alternativeButtonTitle = "Not now"
+        page.isDismissable = true
+        page.appearance.actionButtonColor = UIColor(red: 0.294, green: 0.85, blue: 0.392, alpha: 1) // Green
+        page.requiresCloseButton = false
+        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+            page.descriptionText = "Would you like to add yourself to this course as a tutor?"
+            page.actionHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+                let netID = UserDefaults.standard.string(forKey: "netID")!
+                NetworkManager.addCourseToUser(netID: netID, isTutor: true, subject: self.course.course_subject, number: self.course.course_num,
+                                               completion: {let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
+                                                banner.show()
+                                                self.tutors.append(netID)
+                                                self.tableView.reloadData()},
+                                               failure: {error in
+                                                let banner = NotificationBanner(title: error, style: .danger)
+                                                banner.show()})
+            }
+            page.alternativeHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+            }
+        }
+        else if tutorTuteeSegment.selectedSegmentIndex == 1 {
+            page.descriptionText = "Would you like to add yourself to this course as a tutee?"
+            page.actionHandler = { (item: BLTNActionItem) in
+                self.bulletinManager.dismissBulletin(animated: true)
+                let netID = UserDefaults.standard.string(forKey: "netID")!
+                NetworkManager.addCourseToUser(netID: netID, isTutor: false, subject: self.course.course_subject, number: self.course.course_num,
+                                               completion: {let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
+                                                self.tutees.append(netID)
+                                                banner.show()},
+                                               failure: {error in
+                                                let banner = NotificationBanner(title: error, style: .danger)
+                                                banner.show()})
+                }
             page.alternativeHandler = { (item: BLTNActionItem) in
                 self.bulletinManager.dismissBulletin(animated: true)
             }
