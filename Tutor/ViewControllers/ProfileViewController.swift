@@ -89,7 +89,6 @@ class ProfileViewController: UIViewController {
                                     self.bio.isEditable = false
                                     self.imageView.image = UIImage(named: user.pic_name)
                                     self.view.backgroundColor = ColorConverter.hexStringToUIColor(hex: user.warm_color)
-                                    print(user.cool_color)
         },
                                    failure: {})
         
@@ -122,9 +121,9 @@ class ProfileViewController: UIViewController {
         }
         bio.snp.makeConstraints{ (make) -> Void in
             make.top.equalTo(majorTextField.snp.bottom).offset(20)
+            make.bottom.equalTo(signOutButton.snp.top).offset(20)
             make.leading.equalTo(view).offset(20)
             make.trailing.equalTo(view).offset(-20)
-            make.height.equalTo(70)
         }
         signOutButton.snp.makeConstraints{ (make) -> Void in
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)

@@ -12,7 +12,7 @@ import Alamofire
 import NotificationBannerSwift
 import Hero
 
-class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
+class ProfileSetupViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
 
     var yearLabel: UILabel!
     var yearTextField: UITextField!
@@ -115,6 +115,9 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
                                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
             bioLabel.textColor = .white
             bio.textColor = .white
+            bio.delegate = self
+            bio.text = "Try to include contact information (phone numbers, address, etc.) that other users can use to reach you!"
+            bio.textColor = .white
             submitButton.setTitleColor(.white, for: .normal)
         }
         setUpConstraints()
@@ -127,7 +130,7 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
             make.width.equalTo(80)
         }
         yearTextField.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(yearLabel)
+            make.centerY.equalTo(yearLabel).offset(1)
             make.leading.equalTo(yearLabel.snp.trailing)
             make.trailing.equalTo(view).offset(-20)
         }
@@ -137,7 +140,7 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
             make.width.equalTo(80)
         }
         majorTextField.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(majorLabel)
+            make.centerY.equalTo(majorLabel).offset(1)
             make.leading.equalTo(majorLabel.snp.trailing)
             make.trailing.equalTo(view).offset(-20)
         }
@@ -146,7 +149,7 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
             make.leading.equalTo(view).offset(20)
         }
         bio.snp.makeConstraints { (make) -> Void in
-            make.top.equalTo(bioLabel.snp.bottom).offset(20)
+            make.top.equalTo(bioLabel.snp.bottom).offset(10)
             make.height.equalTo(100)
             make.leading.equalTo(view).offset(15)
             make.trailing.equalTo(view).offset(-20)
@@ -154,6 +157,19 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
         submitButton.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(bio.snp.bottom).offset(40)
             make.centerX.equalTo(view)
+        }
+    }
+    
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        if (self.bio.text == "Try to include contact information (phone numbers, address, etc.) that other users can use to reach you!") {
+            self.bio.text = ""
+        }
+        return true
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if (bio.text == "") {
+            self.bio.text = "Try to include contact information (phone numbers, address, etc.) that other users can use to reach you!"
         }
     }
     

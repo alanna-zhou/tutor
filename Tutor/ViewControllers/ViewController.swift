@@ -31,6 +31,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     let tutorTuteeReuseIdentifier = "tutorTuteeReuseIdentifier"
     let courseCellHeight: CGFloat = 60
     let tutorTuteeCellHeight: CGFloat = 90
+    let coursesSpacingHeight: CGFloat = 10
     let cellSpacingHeight: CGFloat = 20
     
     override func viewDidLoad() {
@@ -89,9 +90,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @objc func swapRole() {
-        tableView.reloadData()
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
+            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
             coursesLabel.text = "Your Courses"
         }
         else if tutorTuteeSegment.selectedSegmentIndex == 1 {
@@ -102,6 +102,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
             coursesLabel.text = "Your Tutees"
         }
+        tableView.reloadData()
     }
     
     // Presenting views
@@ -182,19 +183,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                                            completion: { courses in
                                             self.selectedTutorCourses = courses
                                             self.allCourses.append(contentsOf: courses)
+                                            DispatchQueue.main.async {self.tableView.reloadData()}},
+                                           failure: { () in
                                             DispatchQueue.main.async {self.tableView.reloadData()}})
             NetworkManager.getTuteeCourses(netID: String(netID),
                                            completion: { courses in
                                             self.selectedTuteeCourses = courses
                                             self.allCourses.append(contentsOf: courses)
+                                            DispatchQueue.main.async {self.tableView.reloadData()}},
+                                           failure: { () in
                                             DispatchQueue.main.async {self.tableView.reloadData()}})
             NetworkManager.getTutorsForUser(netID: String(netID),
                                             completion: { tutors in
                                                 self.tutors = tutors
+                                                DispatchQueue.main.async {self.tableView.reloadData()}},
+                                            failure: { () in
+                                                self.tutors = []
                                                 DispatchQueue.main.async {self.tableView.reloadData()}})
             NetworkManager.getTuteesForUser(netID: String(netID),
                                             completion: { tutees in
                                                 self.tutees = tutees
+                                                DispatchQueue.main.async {self.tableView.reloadData()}},
+                                            failure: { () in
+                                                self.tutees = []
                                                 DispatchQueue.main.async {self.tableView.reloadData()}})
         }
     }
@@ -203,17 +214,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 extension ViewController {
     // Tableview configuration
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            return allCourses.count
-        }
-        else {
-            return 1
-        }
+        return 1
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            return 1
+            return self.allCourses.count
         }
         if tutorTuteeSegment.selectedSegmentIndex == 1 {
             return self.tutors.count
@@ -227,7 +233,7 @@ extension ViewController {
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: courseReuseIdentifier, for: indexPath) as! CourseTableViewCell
             var course: Course
-            course = allCourses[indexPath.row]
+            course = allCourses[indexPath.section]
             cell.addInfo(course: course)
             cell.setNeedsUpdateConstraints()
             return cell
@@ -260,10 +266,6 @@ extension ViewController {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         getCoursesAndUsers()
-//        if tutorTuteeSegment.selectedSegmentIndex == 0 {
-//            let tutorTuteeViewController = TutorTuteeCatalogViewController(course: allCourses[indexPath.row])
-//            navigationController?.pushViewController(tutorTuteeViewController, animated: true)
-//        }
         if tutorTuteeSegment.selectedSegmentIndex == 1 {
             let userAtIndex = tutors[indexPath.section]
             let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)
@@ -277,7 +279,7 @@ extension ViewController {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            return 0
+            return coursesSpacingHeight
         }
         return cellSpacingHeight
     }

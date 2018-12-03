@@ -22,6 +22,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     let courseWishlistReuseIdentifier = "courseWishlistReuseIdentifier"
     
     let cellHeight: CGFloat = 60
+    let cellSpacingHeight: CGFloat = 10
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -53,6 +54,7 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.register(CourseWishlistTableViewCell.self, forCellReuseIdentifier: courseWishlistReuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         let rightFade = AnimationType.from(direction: .right, offset: 60.0)
         tableView.animate(animations: [rightFade], duration: 0.5)
         view.addSubview(tableView)
@@ -62,11 +64,18 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     
     func setUpConstraints() {
         tableView.snp.makeConstraints{ (make) -> Void in
-            make.top.bottom.leading.trailing.equalTo(view)
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalTo(view).offset(10)
+            make.trailing.equalTo(view).offset(-10)
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         if isFiltering() {
             return filteredCourses.count
         }
@@ -77,9 +86,9 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: courseWishlistReuseIdentifier, for: indexPath) as! CourseWishlistTableViewCell
         let course: String
         if isFiltering() {
-            course = filteredCourseNames[indexPath.row]
+            course = filteredCourseNames[indexPath.section]
         } else {
-            course = courseNames[indexPath.row]
+            course = courseNames[indexPath.section]
         }
         cell.addInfo(course: course)
         cell.setNeedsUpdateConstraints()
@@ -93,12 +102,22 @@ class WishlistViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var courseAtIndex: Course
         if isFiltering() {
-            courseAtIndex = filteredCourses[indexPath.row]
+            courseAtIndex = filteredCourses[indexPath.section]
         } else {
-            courseAtIndex = courses[indexPath.row]
+            courseAtIndex = courses[indexPath.section]
         }
         let tutorTuteeCatalogViewController = TutorTuteeCatalogViewController(course: courseAtIndex)
         navigationController?.pushViewController(tutorTuteeCatalogViewController, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return cellSpacingHeight
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = UIColor.clear
+        return headerView
     }
     
     func searchBarIsEmpty() -> Bool {

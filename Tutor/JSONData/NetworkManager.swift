@@ -63,7 +63,7 @@ class NetworkManager {
         }
     }
     
-    static func getTutorCourses(netID: String, completion: @escaping ([Course]) -> Void) {
+    static func getTutorCourses(netID: String, completion: @escaping ([Course]) -> Void, failure: @escaping () -> Void) {
         let tutorCoursesURL = "http://35.190.144.148/api/tutor/\(netID)/courses/"
 
         Alamofire.request(tutorCoursesURL, method: .get).validate().responseData { response in
@@ -84,12 +84,13 @@ class NetworkManager {
                 }
                 else {
                     print(error.localizedDescription)
+                    failure()
                 }
             }
         }
     }
     
-    static func getTuteeCourses(netID: String, completion: @escaping ([Course]) -> Void) {
+    static func getTuteeCourses(netID: String, completion: @escaping ([Course]) -> Void, failure: @escaping () -> Void) {
         let tuteeCoursesURL = "http://35.190.144.148/api/tutee/\(netID)/courses/"
         Alamofire.request(tuteeCoursesURL, method: .get).validate().responseData { response in
             switch response.result {
@@ -109,6 +110,7 @@ class NetworkManager {
                 }
                 else {
                     print(error.localizedDescription)
+                    failure()
                 }
             }
         }
@@ -168,7 +170,7 @@ class NetworkManager {
         }
     }
     
-    static func getTutorsForUser(netID: String, completion: @escaping ([String]) -> Void) {
+    static func getTutorsForUser(netID: String, completion: @escaping ([String]) -> Void, failure: @escaping () -> Void) {
         let courseTuteesURL = "http://35.190.144.148/api/user/\(netID)/tutors/"
         Alamofire.request(courseTuteesURL, method: .get).validate().responseData { response in
             switch response.result {
@@ -189,12 +191,13 @@ class NetworkManager {
                 }
                 else {
                     print(error.localizedDescription)
+                    failure()
                 }
             }
         }
     }
     
-    static func getTuteesForUser(netID: String, completion: @escaping ([String]) -> Void) {
+    static func getTuteesForUser(netID: String, completion: @escaping ([String]) -> Void, failure: @escaping () -> Void) {
         let courseTuteesURL = "http://35.190.144.148/api/user/\(netID)/tutees/"
         Alamofire.request(courseTuteesURL, method: .get).validate().responseData { response in
             switch response.result {
@@ -215,6 +218,7 @@ class NetworkManager {
                 }
                 else {
                     print(error.localizedDescription)
+                    failure()
                 }
             }
         }
@@ -343,7 +347,7 @@ class NetworkManager {
     }
     
     static func matchUsers(tutorID: String, tuteeID: String, course: Course, completion: @escaping() -> Void, failure: @escaping (String) -> Void) {
-        let matchUsersURL = "http://35.190.144.148/api/match"
+        let matchUsersURL = "http://35.190.144.148/api/match/"
         let parameters: Parameters = ["tutor_net_id": tutorID,
                                       "tutee_net_id": tuteeID,
                                       "course_subject": course.course_subject,
@@ -355,12 +359,8 @@ class NetworkManager {
                 print("Successful response")
                 if let userMatch = try? decoder.decode(UserMatchData.self, from: data) {
                     if userMatch.success {
-                        print("user added")
                         completion()
                     }
-                }
-                else {
-                    print("yeyee")
                 }
             case let .failure(error):
                 if let data = response.data {
@@ -392,9 +392,6 @@ class NetworkManager {
                     if userMatch.success {
                         completion()
                     }
-                }
-                else {
-                    print("yeyee")
                 }
             case let .failure(error):
                 if let data = response.data {
