@@ -13,7 +13,7 @@ class User(db.Model):
     pic_name = db.Column(db.String, nullable=False)
     warm_color = db.Column(db.String, nullable=False)
     cool_color = db.Column(db.String, nullable=False)
-    user_to_course = db.relationship('UserToCourse', cascade='delete')
+    user_to_courses = db.relationship('UserToCourse', cascade='delete')
 
     def __init__(self, **kwargs):
       self.net_id = kwargs.get('net_id')
@@ -43,7 +43,7 @@ class Course(db.Model):
     course_subject = db.Column(db.String, nullable=False)
     course_num = db.Column(db.Integer, nullable=False)
     course_name = db.Column(db.String, nullable=False)
-    user_to_course = db.relationship('UserToCourse', cascade='delete')
+    user_to_courses = db.relationship('UserToCourse', cascade='delete')
 
     def __init__(self, **kwargs):
       self.course_subject = kwargs.get('course_subject')
@@ -63,7 +63,7 @@ class UserToCourse(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     is_tutor = db.Column(db.Boolean, nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-    
+
     def __init__(self, **kwargs):
       self.user_id = kwargs.get('user_id')
       self.is_tutor = kwargs.get('is_tutor', False)
