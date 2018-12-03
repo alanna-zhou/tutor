@@ -263,12 +263,13 @@ extension ViewController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        getCoursesAndUsers()
         if tutorTuteeSegment.selectedSegmentIndex == 1 {
+            getCoursesAndUsers()
             let userAtIndex = tutors[indexPath.section]
             let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)
             navigationController?.pushViewController(userProfileViewController, animated: true)
         } else if tutorTuteeSegment.selectedSegmentIndex == 2 {
+            getCoursesAndUsers()
             let userAtIndex = tutees[indexPath.section]
             let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)
             navigationController?.pushViewController(userProfileViewController, animated: true)
@@ -286,18 +287,5 @@ extension ViewController {
         let headerView = UIView()
         headerView.backgroundColor = UIColor.clear
         return headerView
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            var selectedCourse: Course
-            let netID = UserDefaults.standard.string(forKey: "netID")!
-            if tutorTuteeSegment.selectedSegmentIndex == 0 {
-                selectedCourse = allCourses[indexPath.row]
-                NetworkManager.deleteUserFromCourse(netID: netID, subject: selectedCourse.course_subject, number: selectedCourse.course_num, completion: {})
-                allCourses.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-            }
-        }
     }
 }
