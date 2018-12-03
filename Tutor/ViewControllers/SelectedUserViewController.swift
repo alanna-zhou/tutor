@@ -149,7 +149,9 @@ class SelectedUserViewController: UIViewController {
             NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: self.course,
                                       completion: {() in
                                         let banner = NotificationBanner(title: "User added!", style: .success)
-                                        banner.show()},
+                                        banner.show()
+                                        (self.navigationController?.viewControllers.first as! ViewController).getCoursesAndUsers()
+            },
                                       failure: { error in
                                         let banner = NotificationBanner(title: error, style: .danger)
                                         banner.show()})},
@@ -157,7 +159,6 @@ class SelectedUserViewController: UIViewController {
             let banner = NotificationBanner(title: error, style: .danger)
             banner.show()
         })
-        (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
     }
 }
 

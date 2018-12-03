@@ -67,6 +67,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
         tableView.refreshControl = refreshControl
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         
         let rightFade = AnimationType.from(direction: .right, offset: 60.0)
         tableView.animate(animations: [rightFade], duration: 0.5)
@@ -91,15 +92,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @objc func swapRole() {
         if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
             coursesLabel.text = "Your Courses"
         }
         else if tutorTuteeSegment.selectedSegmentIndex == 1 {
-            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
             coursesLabel.text = "Your Tutors"
         }
         else {
-            self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
             coursesLabel.text = "Your Tutees"
         }
         tableView.reloadData()
