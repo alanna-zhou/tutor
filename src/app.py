@@ -19,9 +19,6 @@ with app.app_context():
 
 # @app.before_first_request
 def insert_initial_values(*args, **kwargs):
-  # db.session.add(Course(course_subject='CS', course_num=2112, course_name='Object-Oriented Programming and Data Structures'))
-  # db.session.add(Course(course_subject='CHEM', course_num=2090, course_name='General Chemistry'))
-  # db.session.add(Course(course_subject='MATH', course_num=1920, course_name='Multivariable Calculus'))
   db.session.add(User(
     net_id='asz33',
     name='Alanna Zhou',
@@ -52,7 +49,6 @@ def insert_initial_values(*args, **kwargs):
     warm_color='',
     cool_color=''
   ))
-  db.session.commit()
   subjects = requests.get('https://classes.cornell.edu/api/2.0/config/subjects.json?roster=FA18').json().get('data', '').get('subjects', '')
   subject_list = []
   for s in subjects:
@@ -112,8 +108,10 @@ def delete_user(net_id):
 
 @app.route('/api/users/', methods=['DELETE'])
 def delete_all_users():
-  db.session.query(User).delete()
-  db.session.commit()
+  user = User.query.all()
+  for u in user:
+    db.session.delete(u)
+    db.session.commit()
   return json.dumps({'success': True}), 200
 
 @app.route('/api/users/', methods=['GET'])
