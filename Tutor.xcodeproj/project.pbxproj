@@ -28,6 +28,7 @@
 		CA8E05F121B3765000642D98 /* ColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8E05F021B3765000642D98 /* ColorCollectionViewCell.swift */; };
 		CAA73EB421AC88F400721663 /* credentials.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAA73EB321AC88F300721663 /* credentials.plist */; };
 		CAA73EB621AC923000721663 /* LoginBulletinPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA73EB521AC923000721663 /* LoginBulletinPage.swift */; };
+		CABDB20521B460F800E96EC4 /* ColorConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABDB20421B460F800E96EC4 /* ColorConverter.swift */; };
 		CABDE2CA21A60E6C00BB77CF /* Course.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABDE2C921A60E6C00BB77CF /* Course.swift */; };
 		CAC7842B21A4A3E60058CDCF /* ProfileSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */; };
 		CAC7843021A532460058CDCF /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7842F21A532460058CDCF /* User.swift */; };
@@ -59,6 +60,7 @@
 		CA8E05F021B3765000642D98 /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
 		CAA73EB321AC88F300721663 /* credentials.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = credentials.plist; sourceTree = "<group>"; };
 		CAA73EB521AC923000721663 /* LoginBulletinPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginBulletinPage.swift; sourceTree = "<group>"; };
+		CABDB20421B460F800E96EC4 /* ColorConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorConverter.swift; sourceTree = "<group>"; };
 		CABDE2C921A60E6C00BB77CF /* Course.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Course.swift; sourceTree = "<group>"; };
 		CAC7842A21A4A3E60058CDCF /* ProfileSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewController.swift; sourceTree = "<group>"; };
 		CAC7842F21A532460058CDCF /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				CAA2D7A121ADDD9000870A11 /* TableViewCells */,
 				CAA2D7A221ADDDBB00870A11 /* JSONData */,
 				CAA73EB521AC923000721663 /* LoginBulletinPage.swift */,
+				CABDB20421B460F800E96EC4 /* ColorConverter.swift */,
 				CAEABFE721AD15D3004DE148 /* Assets.xcassets */,
 				CA7BF8AD21A467270073F6E8 /* LaunchScreen.storyboard */,
 				CAA73EB321AC88F300721663 /* credentials.plist */,
@@ -355,6 +358,7 @@
 				CA5547D621AA269C004C1197 /* CourseTableViewCell.swift in Sources */,
 				CA19E03221A9F6C2005BA9F4 /* WishlistViewController.swift in Sources */,
 				CA8E05EF21B3754300642D98 /* ColorSelectViewController.swift in Sources */,
+				CABDB20521B460F800E96EC4 /* ColorConverter.swift in Sources */,
 				CAC7842B21A4A3E60058CDCF /* ProfileSetupViewController.swift in Sources */,
 				CA7BF8A521A467250073F6E8 /* AppDelegate.swift in Sources */,
 				CA27358821B0A08C00D72DC8 /* RoleSelectionViewController.swift in Sources */,

@@ -17,7 +17,9 @@ struct User: Codable {
     let year: String
     let major: String
     let bio: String
-    let url: String
+    let pic_name: String // profile picture name
+    let warm_color: String
+    let cool_color: String
 }
 
 struct UserArray: Codable {

@@ -24,6 +24,11 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
     var role: Role!
     var color: UIColor!
     var id: String!
+    var warm: String!
+    var cool: String!
+    var imageURL: String!
+    
+    weak var delegate: RoleSelectionViewController!
     
     init(color: UIColor!, role: Role, id: String) {
         super.init(nibName: nil, bundle: nil)
@@ -150,7 +155,12 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
             make.top.equalTo(bio.snp.bottom).offset(40)
             make.centerX.equalTo(view)
         }
-        
+    }
+    
+    func addInfo(warm: String, cool: String, imageURL: String) {
+        self.warm = warm
+        self.cool = cool
+        self.imageURL = imageURL
     }
     
     @objc func validateProfile() {
@@ -184,7 +194,7 @@ class ProfileSetupViewController: UIViewController, UITextFieldDelegate {
                                         banner.show()
                                         UIApplication.shared.keyWindow?.rootViewController?.dismiss(animated: true, completion: nil)})},
                                    failure: { () in             // If user doesn't exist and a new profile is being created
-                                    NetworkManager.addUser(netID: netID, name: name, year: year, major: major, bio: bio,
+                                    NetworkManager.addUser(netID: netID, name: name, year: year, major: major, bio: bio, picName: self.imageURL, warmColor: self.warm, coolColor: self.cool,
                                         completion: { () in
                                         let banner = NotificationBanner(title: "Successfully logged in!", style: .success)
                                         banner.show()

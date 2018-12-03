@@ -13,12 +13,13 @@ import NotificationBannerSwift
 
 class SelectedUserViewController: UIViewController {
     var netID: String!
-    var fullNameLabel: UILabel!
+    var nameLabel: UILabel!
     var netIDLabel: UILabel!
-    var majorTitleLabel: UILabel!
-    var gradYearTitleLabel: UILabel!
-    var bioTitleLabel: UILabel!
+    var majorLabel: UILabel!
+    var yearLabel: UILabel!
+    var bio: UITextView!
     var addButton: UIButton!
+    var imageView: UIImageView!
     var isTutor: Bool!
     var course: Course!
     
@@ -45,71 +46,96 @@ class SelectedUserViewController: UIViewController {
         view.backgroundColor = .white
         title = "Profile"
         
-        fullNameLabel = UILabel()
-        fullNameLabel.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        let layer = CAShapeLayer()
+        layer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: view.frame.height / 3, width: view.frame.width, height: view.frame.height * 2 / 3), cornerRadius: 0).cgPath
+        layer.fillColor = UIColor.white.cgColor
+        view.layer.addSublayer(layer)
+        
+        imageView = UIImageView()
+        
+        nameLabel = UILabel()
+        nameLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
+        nameLabel.textAlignment = .center
         
         netIDLabel = UILabel()
-        netIDLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        netIDLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
+        netIDLabel.textAlignment = .center
         
-        majorTitleLabel = UILabel()
+        majorLabel = UILabel()
+        majorLabel.font = UIFont.systemFont(ofSize: 22, weight: .regular)
+        majorLabel.textAlignment = .center
         
-        gradYearTitleLabel = UILabel()
+        yearLabel = UILabel()
+        yearLabel.font = UIFont.systemFont(ofSize: 22, weight: .regular)
+        yearLabel.textAlignment = .center
         
-        bioTitleLabel = UILabel()
+        bio = UITextView()
+        bio.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         
         addButton = UIButton()
-        addButton.setTitle("Add", for: .normal)
+        addButton.setTitle("Add User", for: .normal)
         addButton.setTitleColor(.black, for: .normal)
-        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
         addButton.addTarget(self, action: #selector(addUser), for: .touchUpInside)
-
-//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTutor))
         
-        view.addSubview(fullNameLabel)
+        view.addSubview(nameLabel)
         view.addSubview(netIDLabel)
-        view.addSubview(majorTitleLabel)
-        view.addSubview(gradYearTitleLabel)
-        view.addSubview(bioTitleLabel)
+        view.addSubview(majorLabel)
+        view.addSubview(yearLabel)
+        view.addSubview(bio)
         view.addSubview(addButton)
+        view.addSubview(imageView)
         
         NetworkManager.getUserInfo(netID: netID,
                                    completion: { user in
-                                    self.fullNameLabel.text = user.name
+                                    self.nameLabel.text = user.name
                                     self.netIDLabel.text = user.net_id
-                                    self.gradYearTitleLabel.text = user.year
-                                    self.majorTitleLabel.text = user.major
-                                    self.bioTitleLabel.text = user.bio},
-                                   failure: {})
+                                    self.yearLabel.text = user.year
+                                    self.majorLabel.text = user.major
+                                    self.imageView.image = UIImage(named: user.pic_name)
+                                    self.bio.text = user.bio
+                                    if self.isTutor {
+                                        self.view.backgroundColor = ColorConverter.hexStringToUIColor(hex: user.warm_color)
+                                    }
+                                    else {
+                                        self.view.backgroundColor = ColorConverter.hexStringToUIColor(hex: user.cool_color)
+                                    }}, failure: {})
         
         setUpConstraints()
         
     }
     func setUpConstraints(){
-        fullNameLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            make.leading.equalTo(view).offset(20)
+        imageView.snp.makeConstraints{ (make) -> Void in
+            make.centerY.equalTo(view).offset(-1 * view.frame.height / 6)
+            make.centerX.equalTo(view)
+            make.height.width.equalTo(100)
+        }
+        nameLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(imageView.snp.bottom).offset(10)
+            make.centerX.equalTo(view)
         }
         netIDLabel.snp.makeConstraints{ (make) -> Void in
-            make.centerY.equalTo(fullNameLabel)
-            make.leading.equalTo(fullNameLabel.snp.trailing).offset(20)
+            make.top.equalTo(nameLabel.snp.bottom).offset(10)
+            make.centerX.equalTo(view)
         }
-        gradYearTitleLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(fullNameLabel.snp.bottom).offset(20)
-            make.leading.equalTo(view).offset(20)
+        yearLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(netIDLabel.snp.bottom).offset(15)
+            make.centerX.equalTo(view).offset(-40)
         }
-        majorTitleLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(gradYearTitleLabel)
-            make.leading.equalTo(gradYearTitleLabel.snp.trailing).offset(10)
+        majorLabel.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(yearLabel)
+            make.leading.equalTo(yearLabel.snp.trailing).offset(10)
         }
-        bioTitleLabel.snp.makeConstraints{ (make) -> Void in
-            make.top.equalTo(majorTitleLabel.snp.bottom).offset(20)
+        bio.snp.makeConstraints{ (make) -> Void in
+            make.top.equalTo(majorLabel.snp.bottom).offset(20)
             make.leading.equalTo(view).offset(20)
             make.trailing.equalTo(view).offset(-20)
+            make.height.equalTo(70)
         }
         if (course != nil) {
             addButton.snp.makeConstraints{ (make) -> Void in
-                make.top.equalTo(bioTitleLabel.snp.bottom).offset(40)
-                make.leading.equalTo(view).offset(20)
+                make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
+                make.centerX.equalTo(view)
             }
         }
     }
@@ -122,22 +148,25 @@ class SelectedUserViewController: UIViewController {
             return
         }
         if isTutor {
-            tutorID = self.netID
-            tuteeID = userNetID
-            
+            tutorID = self.netID    // Added tutor
+            tuteeID = userNetID     // User adding tutor
         }
         else {
-            tutorID = userNetID
-            tuteeID = self.netID
+            tutorID = userNetID     // User adding tutee
+            tuteeID = self.netID    // Added tutee
         }
-        NetworkManager.addCourseToUser(netID: self.netID, isTutor: isTutor, subject: course.course_subject, number: course.course_num, completion: {}, failure: {error in})
-        NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: course,
-                                  completion: {() in
-                                    let banner = NotificationBanner(title: "User added!", style: .success)
-                                    banner.show()},
-                                  failure: { error in
-                                    let banner = NotificationBanner(title: "You can't add this user.", style: .danger)
-                                    banner.show()})
+        NetworkManager.addCourseToUser(netID: userNetID, isTutor: !isTutor, subject: course.course_subject, number: course.course_num, completion: {
+            NetworkManager.matchUsers(tutorID: tutorID, tuteeID: tuteeID, course: self.course,
+                                      completion: {() in
+                                        let banner = NotificationBanner(title: "User added!", style: .success)
+                                        banner.show()},
+                                      failure: { error in
+                                        let banner = NotificationBanner(title: error, style: .danger)
+                                        banner.show()})
+        }, failure: { error in
+            let banner = NotificationBanner(title: error, style: .danger)
+            banner.show()
+        })
         (self.navigationController?.viewControllers.first as! ViewController).tableView.reloadData()
     }
 }

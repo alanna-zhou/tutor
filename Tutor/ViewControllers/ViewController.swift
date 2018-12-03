@@ -164,8 +164,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         NetworkManager.getUserInfo(netID: String(netID),
             completion: { user in
                 self.bulletinManager?.dismissBulletin(animated: true)
+                self.tableView.reloadData()
         },  failure: { () in
             self.bulletinManager?.dismissBulletin(animated: true)
+            self.tableView.reloadData()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.presentIntroViewController()}     // Failure
             })
@@ -257,10 +259,11 @@ extension ViewController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tutorTuteeSegment.selectedSegmentIndex == 0 {
-            let tutorTuteeViewController = TutorTuteeCatalogViewController(course: allCourses[indexPath.row])
-            navigationController?.pushViewController(tutorTuteeViewController, animated: true)
-        }
+        getCoursesAndUsers()
+//        if tutorTuteeSegment.selectedSegmentIndex == 0 {
+//            let tutorTuteeViewController = TutorTuteeCatalogViewController(course: allCourses[indexPath.row])
+//            navigationController?.pushViewController(tutorTuteeViewController, animated: true)
+//        }
         if tutorTuteeSegment.selectedSegmentIndex == 1 {
             let userAtIndex = tutors[indexPath.section]
             let userProfileViewController = SelectedUserViewController(netID: userAtIndex, isTutor: tutorTuteeSegment.selectedSegmentIndex == 1)
@@ -288,18 +291,12 @@ extension ViewController {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             var selectedCourse: Course
-            var selectedUser: String
+            let netID = UserDefaults.standard.string(forKey: "netID")!
             if tutorTuteeSegment.selectedSegmentIndex == 0 {
                 selectedCourse = allCourses[indexPath.row]
-                NetworkManager.deleteUserFromCourse(netID: UserDefaults.standard.string(forKey: "netID")!, subject: selectedCourse.course_subject, number: selectedCourse.course_num, completion: {})
+                NetworkManager.deleteUserFromCourse(netID: netID, subject: selectedCourse.course_subject, number: selectedCourse.course_num, completion: {})
                 allCourses.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
-            } else if tutorTuteeSegment.selectedSegmentIndex == 1 {
-                selectedUser = tutors[indexPath.section]
-                print("deleting this boi")
-            } else if tutorTuteeSegment.selectedSegmentIndex == 2 {
-                selectedUser = tutees[indexPath.section]
-                print("deleting this boi")
             }
         }
     }

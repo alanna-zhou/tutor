@@ -45,7 +45,7 @@ class IntroViewController: UIViewController {
     
     func setUpConstraints() {
         boldPromptLabel.snp.makeConstraints{ (make) -> Void in
-            make.center.equalTo(view).offset(-80)
+            make.centerY.equalTo(view).offset(-80)
             make.leading.equalTo(view).offset(30)
             make.trailing.equalTo(view).offset(-30)
         }

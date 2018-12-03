@@ -248,13 +248,16 @@ class NetworkManager {
         }
     }
     
-    static func addUser(netID: String, name: String, year: String, major: String, bio: String, completion: @escaping () -> Void) {
+    static func addUser(netID: String, name: String, year: String, major: String, bio: String, picName: String, warmColor: String, coolColor: String, completion: @escaping () -> Void) {
         let addUserURL = "http://35.190.144.148/api/user/"
         let parameters: Parameters = ["net_id": netID,
                                       "name": name,
                                       "year": year,
                                       "major": major,
-                                      "bio": bio]
+                                      "bio": bio,
+                                      "pic_name": picName,
+                                      "warm_color": warmColor,
+                                      "cool_color": coolColor]
         Alamofire.request(addUserURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
             switch response.result {
             case let .success(data):
@@ -352,8 +355,12 @@ class NetworkManager {
                 print("Successful response")
                 if let userMatch = try? decoder.decode(UserMatchData.self, from: data) {
                     if userMatch.success {
+                        print("user added")
                         completion()
                     }
+                }
+                else {
+                    print("yeyee")
                 }
             case let .failure(error):
                 if let data = response.data {
@@ -364,7 +371,40 @@ class NetworkManager {
                 }
                 else {
                     print(error.localizedDescription)
-                    failure(error)
+                    failure(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    static func deleteMatch(tutorID: String, tuteeID: String, course: Course, completion: @escaping () -> Void) {
+        let deleteMatchURL = "http://35.190.144.148/api/match/delete/"
+        let parameters: Parameters = ["tutor_net_id": tutorID,
+                                      "tutee_net_id": tuteeID,
+                                      "course_subject": course.course_subject,
+                                      "course_num": course.course_num]
+        Alamofire.request(deleteMatchURL, method: .post, parameters: parameters, encoding: JSONEncoding.default).validate().responseData { response in
+            switch response.result {
+            case let .success(data):
+                let decoder = JSONDecoder()
+                print("Successful response")
+                if let userMatch = try? decoder.decode(UserMatchData.self, from: data) {
+                    if userMatch.success {
+                        completion()
+                    }
+                }
+                else {
+                    print("yeyee")
+                }
+            case let .failure(error):
+                if let data = response.data {
+                    let decoder = JSONDecoder()
+                    if let errorMessage = try? decoder.decode(ErrorMessage.self, from: data) {
+                        print(errorMessage.error)
+                    }
+                }
+                else {
+                    print(error.localizedDescription)
                 }
             }
         }

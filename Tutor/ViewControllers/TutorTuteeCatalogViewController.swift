@@ -21,6 +21,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     var tableView: UITableView!
     var tutorTuteeSegment: UISegmentedControl!
     var bulletinManager: BLTNItemManager!
+    var refreshControl: UIRefreshControl!
     
     var courseTutorsURL: String!
     var courseTuteesURL: String!
@@ -45,16 +46,19 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
         self.navigationItem.titleView = tutorTuteeSegment
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(displayBulletin))
         
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(pulledToRefresh), for: .valueChanged)
+        
         tableView = UITableView()
         tableView.register(TutorTuteeTableViewCell.self, forCellReuseIdentifier: tutorTuteeReuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+        tableView.refreshControl = refreshControl
         
         let rightFade = AnimationType.from(direction: .right, offset: 60.0)
         tableView.animate(animations: [rightFade], duration: 0.5)
         view.addSubview(tableView)
-        
         setUpConstraints()
     }
     
@@ -79,7 +83,6 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     func getCourseInfo() {
         NetworkManager.getCourseTutors(subject: course.course_subject, number: course.course_num, completion: { users in
             self.tutors = users
-            self.checkEmpty()
             DispatchQueue.main.async {self.tableView?.reloadData()}}, failure: { () in self.tutors = []})
         NetworkManager.getCourseTutees(subject: course.course_subject, number: course.course_num, completion: { users in
             self.tutees = users
@@ -102,8 +105,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                                                completion: {
                                                 let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
                                                 banner.show()
-                                                self.tutees.append(netID)
-                                                self.tableView.reloadData()},
+                                                self.getCourseInfo()},
                                                failure: {error in
                                                 let banner = NotificationBanner(title: error, style: .danger)
                                                 banner.show()})
@@ -121,8 +123,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                                                completion: {
                                                 let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
                                                 banner.show()
-                                                self.tutors.append(netID)
-                                                self.tableView.reloadData()},
+                                                self.getCourseInfo()},
                                                failure: {error in
                                                 let banner = NotificationBanner(title: error, style: .danger)
                                                 banner.show()})
@@ -158,8 +159,7 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                                                completion: {
                                                 let banner = NotificationBanner(title: "Added to course as tutor!", style: .success)
                                                 banner.show()
-                                                self.tutors.append(netID)
-                                                self.tableView.reloadData()},
+                                                self.getCourseInfo()},
                                                failure: {error in
                                                 let banner = NotificationBanner(title: error, style: .danger)
                                                 banner.show()})
@@ -176,8 +176,8 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
                 NetworkManager.addCourseToUser(netID: netID, isTutor: false, subject: self.course.course_subject, number: self.course.course_num,
                                                completion: {
                                                 let banner = NotificationBanner(title: "Added to course as tutee!", style: .success)
-                                                self.tutees.append(netID)
-                                                banner.show()},
+                                                banner.show()
+                                                self.getCourseInfo()},
                                                failure: {error in
                                                 let banner = NotificationBanner(title: error, style: .danger)
                                                 banner.show()})
@@ -200,6 +200,11 @@ class TutorTuteeCatalogViewController: UIViewController, UITableViewDelegate, UI
     @objc func swapRole() {
         tableView.reloadData()
         checkEmpty()
+    }
+    
+    @objc func pulledToRefresh() {
+        getCourseInfo()
+        refreshControl.endRefreshing()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
