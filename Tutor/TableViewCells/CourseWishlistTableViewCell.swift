@@ -21,6 +21,13 @@ class CourseWishlistTableViewCell: UITableViewCell {
         courseLabel.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
         courseLabel.textColor = .white
         contentView.addSubview(courseLabel)
+        
+        self.selectedBackgroundView = {
+            let view = UIView()
+            view.layer.cornerRadius = 20
+            view.backgroundColor = UIColor.lightGray
+            return view
+        }()
     }
     
     override func updateConstraints() {
