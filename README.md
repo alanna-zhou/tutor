@@ -13,13 +13,21 @@ iOS: Most of our views use SnapKit and almost all our information is displayed t
 
 Backend: We designed our own API to store all the user information and keep track of tutor/tutee pairs. To pull all the course information, we used the CODI Explorer API. We also used the Google Sign-In API for user verification and to give each user a unique netID.
 
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0231.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0236.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0239.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0242.PNG)
+#User Login
+Users can't access information until they login to prevent people from registering for classes without the required info.
 ![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0243.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0244.PNG)
+
+#Profile Customization
+There are many ways for users to customize their profiles and display information to others.
 ![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0245.PNG)
 ![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0247.PNG)
+![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0231.PNG)
+![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0236.PNG)
+![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0244.PNG)
+
+#Adding Users, Viewing Profiles, and Tracking Tutors/Tutees
+Tutors and courses are displayed in simple, colorful TableViews.
+![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0239.PNG)
+![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0242.PNG)
 ![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0248.PNG)
 
