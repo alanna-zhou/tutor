@@ -16,21 +16,20 @@ Backend: We designed our own API to store all the user information and keep trac
 ## User Login
 Users can't access information until they login to prevent people from registering for classes without the required info.
 
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0243.PNG)
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0243.PNG" width="100" height="200">
 
 ## Profile Customization
 There are many ways for users to customize their profiles and display information to others.
 
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0245.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0247.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0231.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0236.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0244.PNG)
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0245.PNG" width="100" height="200">
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0247.PNG" width="100" height="200">
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0231.PNG" width="100" height="200">
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0236.PNG" width="100" height="200">
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0244.PNG" width="100" height="200">
 
 ## Adding Users, Viewing Profiles, and Tracking Tutors/Tutees
 Tutors and courses are displayed in simple, colorful TableViews.
 
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0239.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0242.PNG)
-![alt text](https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0248.PNG)
-
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0239.PNG" width="100" height="200">
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0242.PNG" width="100" height="200">
+<img src="https://github.com/alanna-zhou/hackchallenge/blob/master/Screenshots/IMG_0248.PNG" width="100" height="200">
